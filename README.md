@@ -161,17 +161,84 @@ await Sbp.getBanks(model, extraAndroidPackageNames: {
    Авито Кошелек);
 4. только банки из реестра `c2bmembers.json`.
 
-Сгенерировать блок для `Info.plist`:
+Записать рекомендуемый список в `Info.plist` вашего приложения (команда запускается из корня приложения):
 
 ```bash
-dart run tool/ios_queries_schemes.dart
+dart run sbp:ios_queries_schemes --write=ios/Runner/Info.plist
 ```
 
 Пример — [example/ios/Runner/Info.plist](example/ios/Runner/Info.plist).
 
-**Лучше — свой список.** Обычно 10–15 банков закрывают почти все оплаты. Логируйте, каким банком
-пользователь заплатил (`launchBank` вернул `opened`), и раз в несколько релизов пересобирайте
-50 схем по этой статистике. Порядок схем не важен, но больше 50 записей добавлять бессмысленно.
+#### Если рекомендуемый список вам не подходит — отредактируйте его
+
+Список 50 банков — только рекомендация. `Info.plist` принадлежит вашему приложению, плагин его не
+меняет и не читает ничего, кроме этого списка, поэтому вы вправе держать там любые схемы.
+
+**1. Найдите schema нужного банка.** Это поле `schema` в
+[c2bmembers.json](https://qr.nspk.ru/proxyapp/c2bmembers.json) (или во встроенном
+`lib/data/c2bmembers_data.dart`), вида `bank100000000153`:
+
+```bash
+curl -s https://qr.nspk.ru/proxyapp/c2bmembers.json \
+  | python3 -c "import json,sys; [print(b['schema'], b['bankName']) for b in json.load(sys.stdin)['dictionary']]" \
+  | grep -i 'венец'
+# bank100000000153 Банк Венец
+```
+
+**2. Поменяйте список одним из способов.**
+
+Командой — добавить и убрать схемы относительно рекомендуемого списка:
+
+```bash
+dart run sbp:ios_queries_schemes \
+  --remove=bank100000000022,bank100000000289 \
+  --add=bank100000000153,bank100000000059 \
+  --write=ios/Runner/Info.plist
+```
+
+Или задать полностью свой список:
+
+```bash
+dart run sbp:ios_queries_schemes --only=bank100000000111,bank100000000004,bank110000000005 --write=ios/Runner/Info.plist
+```
+
+Без `--write` команда только печатает блок `LSApplicationQueriesSchemes`. Команда проверяет, что схем
+не больше 50 и что все они есть в реестре. Новый банк, которого ещё нет во встроенном снимке,
+можно добавить с `--force`.
+
+Вручную — откройте `ios/Runner/Info.plist` (в Xcode: Runner → Info → *Queried URL Schemes*) и
+добавьте или удалите строки в массиве:
+
+```xml
+<key>LSApplicationQueriesSchemes</key>
+<array>
+  <string>bank100000000111</string> <!-- Сбербанк -->
+  <string>bank100000000153</string> <!-- Банк Венец -->
+</array>
+```
+
+**3. Пересоберите приложение.** `Info.plist` читается при установке, hot reload и hot restart
+изменения не подхватят. Нужен полный перезапуск: `flutter run`.
+
+**4. Проверьте в debug-логе.** Если схем больше 50, плагин напишет при первом вызове
+`getInstalledBanks`:
+
+```
+sbp: LSApplicationQueriesSchemes has 61 entries, iOS uses only the first 50. See sbpIosPriorityBankSchemes.
+sbp: 12 of 195 banks cannot be detected on iOS (...)
+```
+
+Правила:
+* не больше 50 записей: iOS учитывает первые 50, остальные молча игнорируются;
+* порядок не важен, если записей не больше 50;
+* в `Info.plist` нужны только банки, которые вы хотите показывать как «установленные». Остальные банки
+  из `c2bmembers.json` всё равно доступны в «Других банках» и открываются через `launchBank`;
+* схему из списка можно удалить, даже если банк остаётся в `c2bmembers.json`: он просто переедет в
+  «Другие банки».
+
+**Как выбрать свои 50.** Обычно 10–15 банков закрывают почти все оплаты. Логируйте, каким банком
+пользователь заплатил (`launchBank` вернул `opened`), и раз в несколько релизов пересобирайте список
+по этой статистике.
 
 Требования: iOS 12.0+.
 
@@ -257,8 +324,9 @@ which includes the new RSHB app `ru.rshb.ownfinance`).
 **50** entries count. Put up to 50 priority bank schemes there; list all other banks as "other banks" and
 open them with `launchBank` — `UIApplication.open` does not need the allow-list, and the plugin returns the
 real result from its completion handler. A recommended list is `sbpIosPriorityBankSchemes`
-(`dart run tool/ios_queries_schemes.dart` prints the plist block); a list built from your own payment
-analytics is better. Requires iOS 12.0+.
+(`dart run sbp:ios_queries_schemes --write=ios/Runner/Info.plist` writes it). The list is only a
+recommendation — edit it with `--add=`, `--remove=` or `--only=` (comma-separated schemes, max 50), or by hand in
+`Info.plist`, then do a full rebuild; a list built from your own payment analytics is better. Requires iOS 12.0+.
 
 ### Migration from 0.1.x
 

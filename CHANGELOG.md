@@ -9,7 +9,7 @@ Dynamic bank list and package-list-free bank detection.
 **Features:**
 * `Sbp.getBanks` → `SbpBanks(installed, others)`; detection settings `android: SbpAndroidDetection` and `ios: SbpIosDetection` (can be `disabled` per platform; the iOS default `queriesSchemesMax50` makes the 50-bank limit visible in IDE hints)
 * iOS: debug-only warning when `LSApplicationQueriesSchemes` exceeds 50 entries or banks cannot be detected
-* `sbpIosPriorityBankSchemes` — recommended 50 iOS schemes, `tool/ios_queries_schemes.dart` prints the plist block
+* `sbpIosPriorityBankSchemes` — recommended 50 iOS schemes, `dart run sbp:ios_queries_schemes` prints or writes (`--write`) the plist block, `--add` / `--remove` / `--only` to edit the list
 * `sbpExtraAndroidPackageNames` — several Android packages per bank, includes the new RSHB app `ru.rshb.ownfinance`
 * `C2bmembersRepository` / `Sbp.loadBanks`: load `c2bmembers.json` from a configurable URL with timeout, on-device cache (24 h TTL), stale-cache and bundled-snapshot fallback
 * `Sbp.launchBank` → `SbpOpenResult` (`opened` / `notInstalled` / `error`), never throws
