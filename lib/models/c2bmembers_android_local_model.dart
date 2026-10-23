@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+@Deprecated('Not used by the plugin since 0.2.0: Android data is now stored in C2bmemberModel')
 class C2bmemberModelAndroidLocalData {
   /// [localName] - локальное название банка, если выставить use_android_local_names = true
   late final String localName;
