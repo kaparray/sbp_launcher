@@ -1,28 +1,20 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.sbp">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.INTERNET" /><!--нужно, чтобы загрузить банки поддерживаемые ссылку nspk.ru-->
+    <uses-permission android:name="android.permission.INTERNET" /><!--загрузка c2bmembers.json-->
 
+    <!--
+    Видимость банковских приложений (Android 11+) без статического списка пакетов:
+    1. любые приложения, которые открывают ссылки СБП вида bankXXXXXXXXXXXX://qr.nspk.ru;
+    2. приложения, которые открывают https://qr.nspk.ru.
+    -->
     <queries>
-        <package android:name="ru.sberbankmobile" />
-        <package android:name="ru.vtb24.mobilebanking.android" />
-        <package android:name="com.idamob.tinkoff.android" />
-        <package android:name="ru.alfabank.mobile.android" />
-        <package android:name="ru.sovcomcard.halva.v1" />
-        <package android:name="ru.rshb.dbo" />
-        <package android:name="ru.gazprombank.android.mobilebank.app" />
-        <package android:name="ru.letobank.Prometheus" />
-        <package android:name="logo.com.mbanking" />
-        <package android:name="com.openbank" />
-        <package android:name="ru.raiffeisennews" />
-        <package android:name="ru.simpls.brs2.mobbank" />
-        <package android:name="ru.rosbank.android" />
-        <package android:name="com.bifit.rncbbeta" />
-        <package android:name="ru.bankuralsib.mb.android" />
-        <package android:name="ru.mts.money" />
-        <package android:name="ru.otpbank.mobile" />
-        <package android:name="ru.bspb" />
-        <package android:name="cb.ibank" />
-        <package android:name="com.bssys.roscapretail" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="*" android:host="qr.nspk.ru" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" android:host="qr.nspk.ru" />
+        </intent>
     </queries>
 </manifest>
