@@ -105,7 +105,7 @@ class MemoryC2bmembersCache implements C2bmembersCache {
 /// Порядок: свежий кэш (моложе [ttl]) → сервер → просроченный кэш → встроенный [c2bmembersData].
 /// Метод [load] не бросает исключений: в худшем случае возвращается встроенный снимок.
 class C2bmembersRepository {
-  /// официальный реестр НСПК. Для продакшена рекомендуем свой прокси.
+  /// официальный реестр банков-участников СБП на портале НСПК
   static const defaultUrl = 'https://qr.nspk.ru/proxyapp/c2bmembers.json';
 
   final Uri url;

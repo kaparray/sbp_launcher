@@ -34,7 +34,7 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  /// В продакшене укажите url своего прокси для c2bmembers.json
+  /// Реестр банков с портала НСПК: https://qr.nspk.ru/proxyapp/c2bmembers.json
   final _repository = C2bmembersRepository();
 
   /// Настройка разработчика: определять ли установленные банки.

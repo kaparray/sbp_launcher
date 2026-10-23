@@ -19,16 +19,15 @@ launch a link to pay via SBP (Система быстрых платежей) of
 ```dart
 import 'package:sbp/sbp.dart';
 
-// 1. Список банков: сервер → кэш на устройстве (24 ч) → встроенный снимок
-final repository = C2bmembersRepository(url: 'https://your-proxy.example.com/c2bmembers.json');
-final loaded = await repository.load();
+// 1. Список банков: портал НСПК → кэш на устройстве (24 ч) → встроенный снимок
+final loaded = await C2bmembersRepository().load(); // https://qr.nspk.ru/proxyapp/c2bmembers.json
 
 // 2. Установленные банки (сверху шторки) и остальные — блок «Другие банки», их тоже можно открыть
 final banks = await Sbp.getBanks(loaded.model);
 banks.installed; // ⚠️ на iOS — не больше 50 банков, см. «iOS: лимит 50 схем»
 banks.others;
 
-// 4. Открываем банк и честно узнаём результат
+// 3. Открываем банк и честно узнаём результат
 final result = await Sbp.launchBank('https://qr.nspk.ru/AS1000...', bank);
 switch (result) {
   case SbpOpenResult.opened:       // банк открылся
@@ -45,16 +44,16 @@ switch (result) {
 с моделью и источником (`network`, `cache`, `staleCache`, `bundled`). Порядок:
 
 1. свежий кэш (моложе `ttl`, по умолчанию 24 часа) — без запроса в сеть;
-2. сервер (`url`, `timeout` по умолчанию 10 секунд);
-3. просроченный кэш, если сервер недоступен;
+2. официальный реестр на портале НСПК — `https://qr.nspk.ru/proxyapp/c2bmembers.json` (`timeout` по умолчанию 10 секунд);
+3. просроченный кэш, если портал недоступен;
 4. встроенный снимок `c2bmembersData` (`lib/data/c2bmembers_data.dart`, дата — `c2bmembersDataDate`).
 
-Ответ, в котором нет ни одного банка (страница ошибки прокси, пустой список), не попадает в кэш.
+Ответ, в котором нет ни одного банка (страница ошибки сети, пустой список), не попадает в кэш.
 Короткий вариант без настроек — `Sbp.loadBanks()`.
 
-**Рекомендация:** держите свой прокси для `c2bmembers.json` и логотипов. `qr.nspk.ru` бывает медленным
-или недоступным из некоторых сетей, а свой прокси позволяет быстро исправить данные банка без
-релиза приложения.
+Реестр `c2bmembers.json` публикует НСПК: это официальный и актуальный список банков-участников СБП
+со схемами, пакетами и логотипами. Берите его с портала НСПК. Адрес по умолчанию уже указывает туда,
+параметр `url` менять не нужно.
 
 Обновить встроенный снимок: `dart run tool/update_c2bmembers.dart` (или `--file=path.json`).
 
@@ -161,7 +160,7 @@ await Sbp.getBanks(model, extraAndroidPackageNames: {
 
 **Какие 50 схем добавлять.** В плагине есть рекомендуемый список `sbpIosPriorityBankSchemes`:
 
-1. крупнейшие банки по вкладам физлиц (Brobank, данные на 01.08.2025) — прокси размера розничной базы;
+1. крупнейшие банки по вкладам физлиц (Brobank, данные на 01.08.2025) — косвенный показатель размера розничной базы;
 2. крупные банки, которые не раскрывают отчётность и поэтому выпали из рейтингов (Райффайзен, ПСБ);
 3. кошельки экосистем и маркетплейсов, через которые много платят (Озон Банк, ВБ Банк, ЮMoney, МТС Деньги,
    Авито Кошелек);
@@ -316,7 +315,7 @@ flutter test integration_test -d <simulator> --dart-define=SBP_IOS_INTERACTIVE=t
 ```dart
 import 'package:sbp/sbp.dart';
 
-final loaded = await C2bmembersRepository(url: 'https://your-proxy.example.com/c2bmembers.json').load();
+final loaded = await C2bmembersRepository().load(); // NSPK registry: https://qr.nspk.ru/proxyapp/c2bmembers.json
 final banks = await Sbp.getBanks(loaded.model); // banks.installed first, banks.others below — both can be opened
 final result = await Sbp.launchBank('https://qr.nspk.ru/AS1000...', bank); // opened / notInstalled / error
 ```
@@ -326,9 +325,9 @@ See [example/lib/main.dart](example/lib/main.dart).
 ### Bank list
 
 `C2bmembersRepository.load()` never throws. It returns a fresh on-device cache (default TTL 24 h), otherwise
-downloads the list (default URL `https://qr.nspk.ru/proxyapp/c2bmembers.json`, 10 s timeout), otherwise
-falls back to a stale cache and finally to the bundled snapshot `c2bmembersData`. Responses without
-any bank are never cached. We recommend serving `c2bmembers.json` from your own proxy.
+downloads the official registry from the NSPK portal (`https://qr.nspk.ru/proxyapp/c2bmembers.json`, 10 s timeout),
+otherwise falls back to a stale cache and finally to the bundled snapshot `c2bmembersData`. Responses without
+any bank are never cached.
 
 Regenerate the bundled snapshot with `dart run tool/update_c2bmembers.dart`.
 
