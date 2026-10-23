@@ -8,47 +8,58 @@ public class SwiftSbpPlugin: NSObject, FlutterPlugin {
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
-public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    if call.method == "getInstalledBanks" {
-        let arguments = (call.arguments as? Dictionary<String,Any>)!
-        let schemaApplications = (arguments["schema_applications"] as? Array<String>)!
-        
-        getInstalledBanks(schemaApplications,result:result)
-    } else if call.method == "openBank" {
-        let arguments = (call.arguments as? Dictionary<String,String>)!
-        let url = schemaLink(arguments["schema"]!  ,arguments["url"]!)
-        
-        open(url, result:result)
-    }
-    else{
+  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    let arguments = call.arguments as? [String: Any]
+    switch call.method {
+    case "getInstalledBanks":
+      guard let schemaApplications = arguments?["schema_applications"] as? [String] else {
+        result(invalidArgument("Argument 'schema_applications' is required"))
+        return
+      }
+      getInstalledBanks(schemaApplications, result: result)
+    case "openBank":
+      guard let link = arguments?["url"] as? String else {
+        result(invalidArgument("Argument 'url' is required"))
+        return
+      }
+      guard let url = schemaLink(arguments?["schema"] as? String, link) else {
+        result(invalidArgument("Invalid url: \(link)"))
+        return
+      }
+      open(url, result: result)
+    default:
       result(FlutterMethodNotImplemented)
     }
   }
+
+  /// canOpenURL отвечает правдиво только для схем из LSApplicationQueriesSchemes
+  /// (с iOS 15 - не больше 50). Для остальных схем всегда false.
   public func getInstalledBanks(_ schemaApplications: [String], result: @escaping FlutterResult) {
-      var schemas: [String] = []
-      for schemaApplication in schemaApplications {
-          if let schema = URL(string: "\(schemaApplication)://") {
-              if UIApplication.shared.canOpenURL(schema) {
-                  schemas.append(schemaApplication)
-              }
-          }
-      }
-      result(schemas)
+    let schemas = schemaApplications.filter { schemaApplication in
+      guard let url = URL(string: "\(schemaApplication)://") else { return false }
+      return UIApplication.shared.canOpenURL(url)
+    }
+    result(schemas)
   }
-    
-    
-    public func open(_ url: URL, result: @escaping FlutterResult) {
-        if #available(iOS 10.0, *) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            result(true)
-        } else {
-            UIApplication.shared.openURL(url)
-            result(true)
-        }
+
+  /// Результат в Dart возвращается только после completionHandler: true - ссылка открылась.
+  public func open(_ url: URL, result: @escaping FlutterResult) {
+    UIApplication.shared.open(url, options: [:]) { success in
+      result(success)
     }
-    
-    public func schemaLink(_ scheme: String,_ link: String)->URL{
-        let url = URL(string: link.replacingOccurrences(of: "https://", with: "\(scheme)://").replacingOccurrences(of: "http://", with: "\(scheme)://"))!
-        return url
+  }
+
+  /// Заменяет https:// или http:// в начале ссылки на схему банка.
+  /// Если схема не передана, ссылка открывается как есть.
+  public func schemaLink(_ scheme: String?, _ link: String) -> URL? {
+    guard let scheme = scheme, !scheme.isEmpty else { return URL(string: link) }
+    for prefix in ["https://", "http://"] where link.lowercased().hasPrefix(prefix) {
+      return URL(string: "\(scheme)://" + link.dropFirst(prefix.count))
     }
+    return URL(string: link)
+  }
+
+  private func invalidArgument(_ message: String) -> FlutterError {
+    FlutterError(code: "INVALID_ARGUMENT", message: message, details: nil)
+  }
 }
