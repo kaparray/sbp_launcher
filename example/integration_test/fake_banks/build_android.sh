@@ -11,7 +11,9 @@ set -euo pipefail
 OUT=${1:?usage: build_android.sh <out_dir>}
 SDK=${ANDROID_HOME:-$HOME/Library/Android/sdk}
 BUILD_TOOLS=$(ls -d "$SDK"/build-tools/* | sort -V | tail -1)
-PLATFORM=$(ls -d "$SDK"/platforms/android-* | sort -V | tail -1)
+# самая новая платформа, в которой есть android.jar (android-CANARY и превью бывают пустыми)
+PLATFORM=$(for p in "$SDK"/platforms/android-*; do if [ -f "$p/android.jar" ]; then echo "$p"; fi; done | sort -V | tail -1)
+[ -n "$PLATFORM" ] || { echo "No Android platform with android.jar in $SDK/platforms" >&2; exit 1; }
 mkdir -p "$OUT"
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
