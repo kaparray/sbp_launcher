@@ -134,6 +134,12 @@ void main() {
     });
   });
 
+  // iOS спрашивает «… wants to open …», если банк открывается не по нажатию пользователя.
+  // В автотесте нажать «Open» некому, поэтому тесты открытия на iOS - только в интерактивном режиме:
+  //   flutter test integration_test -d <simulator> --dart-define=SBP_IOS_INTERACTIVE=true
+  const iosInteractive = bool.fromEnvironment('SBP_IOS_INTERACTIVE');
+  const iosOpenSkip = iosInteractive ? false : 'needs a tap on the iOS "wants to open" alert: SBP_IOS_INTERACTIVE=true';
+
   group('iOS', skip: !Platform.isIOS, () {
     test('Info.plist has the recommended 50 schemes', () async {
       final schemes = await const MethodChannel('sbp').invokeListMethod<String>('getQueriesSchemes');
@@ -148,12 +154,12 @@ void main() {
       expect(_schemas(installed), {_sber});
     });
 
-    test('bank outside Info.plist still opens and reports the real result', () async {
+    test('bank outside Info.plist still opens and reports the real result', skip: iosOpenSkip, () async {
       expect(await Sbp.launchBank(_url, _bank(_venets)), SbpOpenResult.opened);
       await Future<void>.delayed(const Duration(seconds: 2)); // fake-банк возвращает нас обратно
-    });
+    }, timeout: const Timeout(Duration(minutes: 2)));
 
-    test('installed bank opens', () async {
+    test('installed bank opens', skip: iosOpenSkip, () async {
       expect(await Sbp.launchBank(_url, _bank(_sber)), SbpOpenResult.opened);
       await Future<void>.delayed(const Duration(seconds: 2));
     });

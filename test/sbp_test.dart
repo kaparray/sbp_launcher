@@ -229,6 +229,14 @@ void main() {
     expect(schemes, sbpIosPriorityBankSchemes);
   });
 
+  test('launchBank rejects an invalid url before calling the platform', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    mockChannel((_) => fail('channel must not be called'));
+
+    expect(await Sbp.launchBank('not a url', _model().c2bmembersModel.first), SbpOpenResult.error);
+    expect(await Sbp.launchBank('', _model().c2bmembersModel.first), SbpOpenResult.error);
+  });
+
   test('bankLink replaces only the leading http(s) scheme', () {
     expect(Sbp.bankLink('https://qr.nspk.ru/A?r=https://x', 'bank1'), 'bank1://qr.nspk.ru/A?r=https://x');
     expect(Sbp.bankLink('HTTP://qr.nspk.ru/A', 'bank1'), 'bank1://qr.nspk.ru/A');

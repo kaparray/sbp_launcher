@@ -153,6 +153,12 @@ await Sbp.getBanks(model, extraAndroidPackageNames: {
 То есть пользователь банка вне списка не увидит его в верхнем блоке, но найдёт в «Других банках» и
 заплатит.
 
+**Открывайте банк только по нажатию пользователя.** Если вызвать `launchBank` без жеста пользователя
+(например, автоматически открыть единственный найденный банк сразу после загрузки), iOS покажет
+системное окно «“Ваше приложение” wants to open “Банк”». Если пользователь нажмёт «Cancel», iOS вернёт
+`false`, и плагин отдаст `SbpOpenResult.notInstalled`: отличить отказ от неустановленного банка iOS
+не позволяет. При открытии по нажатию на строку банка это окно не появляется.
+
 **Какие 50 схем добавлять.** В плагине есть рекомендуемый список `sbpIosPriorityBankSchemes`:
 
 1. крупнейшие банки по вкладам физлиц (Brobank, данные на 01.08.2025) — прокси размера розничной базы;
@@ -259,6 +265,34 @@ flutter:
 `getInstalledBanks(model, useAndroidLocalIcons: true, useAndroidLocalNames: true)` заполнит
 `bitmap` и `localName`.
 
+### Тесты
+
+```bash
+flutter test                                   # Dart: парсинг, репозиторий, API, MethodChannel
+cd example && flutter test                     # виджет-тест примера
+cd example/android && ./gradlew :sbp:testDebugUnitTest   # Kotlin: определение банков (JVM)
+```
+
+Интеграционные тесты идут на настоящей ОС против fake-банков. Это крошечные приложения, которые
+открывают ссылки СБП. Они собираются скриптами из `example/integration_test/fake_banks/`:
+
+```bash
+cd example
+integration_test/run_matrix.sh android 21 30 33 36       # эмуляторы: system-images;android-N;default;arm64-v8a
+integration_test/run_matrix.sh ios com.apple.CoreSimulator.SimRuntime.iOS-18-5
+```
+
+На iOS тесты успешного открытия банка пропускаются: без нажатия пользователя iOS показывает окно
+«wants to open», и в автотесте нажать «Open» некому. Запустить их можно вручную,
+нажимая «Open» в симуляторе:
+
+```bash
+flutter test integration_test -d <simulator> --dart-define=SBP_IOS_INTERACTIVE=true
+```
+
+Каждое устройство создаётся с нуля и удаляется после прогона. Логи и `summary.txt` пишутся в
+`example/build/sbp_matrix/`.
+
 ### Миграция с 0.1.x
 
 | 0.1.x | 0.2.0 |
@@ -322,11 +356,18 @@ which includes the new RSHB app `ru.rshb.ownfinance`).
 
 `canOpenURL` only works for schemes in `LSApplicationQueriesSchemes`, and since iOS 15 only the first
 **50** entries count. Put up to 50 priority bank schemes there; list all other banks as "other banks" and
-open them with `launchBank` — `UIApplication.open` does not need the allow-list, and the plugin returns the
+open them with `launchBank` (from a user tap: otherwise iOS shows a "wants to open" alert, and Cancel is
+reported as `notInstalled`) — `UIApplication.open` does not need the allow-list, and the plugin returns the
 real result from its completion handler. A recommended list is `sbpIosPriorityBankSchemes`
 (`dart run sbp:ios_queries_schemes --write=ios/Runner/Info.plist` writes it). The list is only a
 recommendation — edit it with `--add=`, `--remove=` or `--only=` (comma-separated schemes, max 50), or by hand in
 `Info.plist`, then do a full rebuild; a list built from your own payment analytics is better. Requires iOS 12.0+.
+
+### Tests
+
+`flutter test` (Dart), `./gradlew :sbp:testDebugUnitTest` in `example/android` (Kotlin), and integration tests
+against fake bank apps on real emulators/simulators: `example/integration_test/run_matrix.sh android 21 36` or
+`run_matrix.sh ios <runtime id>`.
 
 ### Migration from 0.1.x
 

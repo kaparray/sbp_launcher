@@ -22,7 +22,8 @@ public class SwiftSbpPlugin: NSObject, FlutterPlugin {
         result(invalidArgument("Argument 'url' is required"))
         return
       }
-      guard let url = schemaLink(arguments?["schema"] as? String, link) else {
+      // с iOS 17 URL(string:) кодирует недопустимые символы вместо nil, поэтому проверяем схему явно
+      guard let url = schemaLink(arguments?["schema"] as? String, link), url.scheme?.isEmpty == false else {
         result(invalidArgument("Invalid url: \(link)"))
         return
       }

@@ -200,7 +200,13 @@ class Sbp {
   /// Открываем банк: Android/IOS.
   /// [url] - ссылка вида 'https://qr.nspk.ru/...', [bank] - банк из списка (установленный или нет).
   /// Не бросает исключений: результат - [SbpOpenResult].
+  ///
+  /// ⚠️ iOS: если открыть банк не по нажатию пользователя (например, автоматически после загрузки),
+  /// iOS спросит «… wants to open …». При отказе iOS возвращает false, и результат будет
+  /// [SbpOpenResult.notInstalled] - отличить отказ от неустановленного банка iOS не позволяет.
   static Future<SbpOpenResult> launchBank(String url, C2bmemberModel bank) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null || !uri.hasScheme || url.contains(' ')) return SbpOpenResult.error;
     try {
       if (_isIOS) {
         return await openBankIOS(url, bank.schema) ? SbpOpenResult.opened : SbpOpenResult.notInstalled;
