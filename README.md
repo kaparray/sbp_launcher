@@ -290,7 +290,8 @@ integration_test/run_matrix.sh ios com.apple.CoreSimulator.SimRuntime.iOS-18-5
 flutter test integration_test -d <simulator> --dart-define=SBP_IOS_INTERACTIVE=true
 ```
 
-Каждое устройство создаётся с нуля и удаляется после прогона. Логи и `summary.txt` пишутся в
+Каждое устройство создаётся с нуля и удаляется после прогона. Для API 30 запускайте с
+`EMULATOR_GPU=host`: на arm64-образе API 30 с программным GPU Flutter зависает на старте. Логи и `summary.txt` пишутся в
 `example/build/sbp_matrix/`.
 
 ### Миграция с 0.1.x
