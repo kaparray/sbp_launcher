@@ -6,7 +6,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:sbp/data/c2bmembers_data.dart';
+import 'package:sbp_launcher/data/c2bmembers_data.dart';
 
 const _defaultUrl = 'https://qr.nspk.ru/proxyapp/c2bmembers.json';
 const _output = 'lib/data/c2bmembers_data.dart';

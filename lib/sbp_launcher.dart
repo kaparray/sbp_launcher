@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:sbp/data/c2bmembers_repository.dart';
-import 'package:sbp/data/sbp_bank_lists.dart';
-import 'package:sbp/models/c2bmembers_model.dart';
+import 'package:sbp_launcher/data/c2bmembers_repository.dart';
+import 'package:sbp_launcher/data/sbp_bank_lists.dart';
+import 'package:sbp_launcher/models/c2bmembers_model.dart';
 
-export 'package:sbp/data/c2bmembers_repository.dart';
-export 'package:sbp/data/sbp_bank_lists.dart';
-export 'package:sbp/models/c2bmembers_model.dart';
+export 'package:sbp_launcher/data/c2bmembers_repository.dart';
+export 'package:sbp_launcher/data/sbp_bank_lists.dart';
+export 'package:sbp_launcher/models/c2bmembers_model.dart';
 
 /// Сколько записей LSApplicationQueriesSchemes учитывает iOS (приложения с iOS 15+ SDK)
 const sbpIosQueriesSchemesLimit = 50;
@@ -66,7 +66,7 @@ enum SbpOpenResult {
 /// Плагин Flutter, с помощью которого можно получить список банков, установленных на устройстве
 /// пользователя, а также запустить ссылку для оплаты СБП вида https://qr.nspk.ru/.../
 class Sbp {
-  static const MethodChannel _channel = MethodChannel('sbp');
+  static const MethodChannel _channel = MethodChannel('sbp_launcher');
 
   static bool get _isAndroid => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
@@ -142,7 +142,7 @@ class Sbp {
       }
       return result;
     }
-    throw UnsupportedError('sbp: getInstalledBanks is supported only on Android and iOS');
+    throw UnsupportedError('sbp_launcher: getInstalledBanks is supported only on Android and iOS');
   }
 
   /// Банки для экрана выбора: установленные (сверху) и все остальные («другие банки»).
@@ -184,11 +184,11 @@ class Sbp {
       final counted = schemes.take(sbpIosQueriesSchemesLimit).toSet();
       final undetectable = banks.where((bank) => !counted.contains(bank.schema)).length;
       if (schemes.length > sbpIosQueriesSchemesLimit) {
-        debugPrint('sbp: LSApplicationQueriesSchemes has ${schemes.length} entries, iOS uses only the first '
+        debugPrint('sbp_launcher: LSApplicationQueriesSchemes has ${schemes.length} entries, iOS uses only the first '
             '$sbpIosQueriesSchemesLimit. See sbpIosPriorityBankSchemes.');
       }
       if (undetectable > 0) {
-        debugPrint('sbp: $undetectable of ${banks.length} banks cannot be detected on iOS (not in the first '
+        debugPrint('sbp_launcher: $undetectable of ${banks.length} banks cannot be detected on iOS (not in the first '
             '$sbpIosQueriesSchemesLimit LSApplicationQueriesSchemes). Show them as "other banks" and open with '
             'Sbp.launchBank.');
       }

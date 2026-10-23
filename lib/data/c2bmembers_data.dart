@@ -14,7 +14,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000111",
       "package_name": "ru.sberbankmobile",
       "webClientUrl": "https://v.sber.ru/sms/sbpqr?params=",
-      "icon": "packages/sbp/assets/icons/sber.png"
+      "icon": "packages/sbp_launcher/assets/icons/sber.png"
     },
     {
       "bankName": "Т-Банк",
@@ -22,7 +22,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000004",
       "package_name": "com.idamob.tinkoff.android",
       "webClientUrl": "https://www.tbank-online.com/mybank/payments/qr-pay",
-      "icon": "packages/sbp/assets/icons/tinkoff.png"
+      "icon": "packages/sbp_launcher/assets/icons/tinkoff.png"
     },
     {
       "bankName": "Банк ВТБ",
@@ -30,7 +30,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank110000000005",
       "package_name": "ru.vtb24.mobilebanking.android",
       "webClientUrl": "https://online.vneshtbank.ru/i/paymentSbp",
-      "icon": "packages/sbp/assets/icons/vtb.png"
+      "icon": "packages/sbp_launcher/assets/icons/vtb.png"
     },
     {
       "bankName": "АЛЬФА-БАНК",
@@ -38,7 +38,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000008",
       "package_name": "ru.alfabank.mobile.android",
       "webClientUrl": "https://payzonaecom.com/mobile-public/goto/qr",
-      "icon": "packages/sbp/assets/icons/alfabank.png"
+      "icon": "packages/sbp_launcher/assets/icons/alfabank.png"
     },
     {
       "bankName": "Райффайзен Банк",
@@ -46,7 +46,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000007",
       "package_name": "ru.raiffeisennews",
       "webClientUrl": "https://online.raiffeisen.ru/outer/qr/qr.nspk.ru",
-      "icon": "packages/sbp/assets/icons/raiffeisen.png"
+      "icon": "packages/sbp_launcher/assets/icons/raiffeisen.png"
     },
     {
       "bankName": "Газпромбанк",
@@ -54,7 +54,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000001",
       "package_name": "ru.gazprombank.android.mobilebank.app",
       "webClientUrl": "https://sbpgpb.ru/c2bpayments",
-      "icon": "packages/sbp/assets/icons/gazprombank.png"
+      "icon": "packages/sbp_launcher/assets/icons/gazprombank.png"
     },
     {
       "bankName": "Банк ПСБ",
@@ -62,7 +62,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000010",
       "package_name": "logo.com.mbanking",
       "webClientUrl": "https://ib.psbank.ru/sbp/payment",
-      "icon": "packages/sbp/assets/icons/pcb.png"
+      "icon": "packages/sbp_launcher/assets/icons/pcb.png"
     },
     {
       "bankName": "Совкомбанк",
@@ -70,7 +70,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000013",
       "package_name": "ru.sovcomcard.halva.v1",
       "webClientUrl": "https://halvacard.ru/lk/qr",
-      "icon": "packages/sbp/assets/icons/sovcomcard.png"
+      "icon": "packages/sbp_launcher/assets/icons/sovcomcard.png"
     },
     {
       "bankName": "РСХБ",
@@ -78,7 +78,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000020",
       "package_name": "ru.rshb.dbo",
       "webClientUrl": "https://online.rshb.ru/dl/sbp",
-      "icon": "packages/sbp/assets/icons/rshb.png"
+      "icon": "packages/sbp_launcher/assets/icons/rshb.png"
     },
     {
       "bankName": "МОСКОВСКИЙ КРЕДИТНЫЙ БАНК",
@@ -86,7 +86,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000025",
       "package_name": "ru.mkb.mobile",
       "webClientUrl": "https://online.mkb.ru/go/c2b",
-      "icon": "packages/sbp/assets/icons/mkb.png"
+      "icon": "packages/sbp_launcher/assets/icons/mkb.png"
     },
     {
       "bankName": "ЮниКредит Банк",
@@ -94,35 +94,35 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000030",
       "package_name": "ru.unicredit.android",
       "webClientUrl": "https://enter.unicredit.ru/c2b",
-      "icon": "packages/sbp/assets/icons/ucb.png"
+      "icon": "packages/sbp_launcher/assets/icons/ucb.png"
     },
     {
       "bankName": "Банк Синара",
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000003.png",
       "schema": "bank100000000003",
       "package_name": "ru.skbbank.ib",
-      "icon": "packages/sbp/assets/icons/sinara.png"
+      "icon": "packages/sbp_launcher/assets/icons/sinara.png"
     },
     {
       "bankName": "Газэнергобанк",
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000043.png",
       "schema": "bank100000000043",
       "package_name": "ru.gebank.ib",
-      "icon": "packages/sbp/assets/icons/gebank.png"
+      "icon": "packages/sbp_launcher/assets/icons/gebank.png"
     },
     {
       "bankName": "АКБ АВАНГАРД",
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000028.png",
       "schema": "bank100000000028",
       "package_name": "ru.avangard.sbp_client",
-      "icon": "packages/sbp/assets/icons/avangard.png"
+      "icon": "packages/sbp_launcher/assets/icons/avangard.png"
     },
     {
       "bankName": "ПНКО ЭЛПЛАТ",
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000086.png",
       "schema": "bank100000000086",
       "package_name": "ru.elplat.elplat2",
-      "icon": "packages/sbp/assets/icons/elplat.png"
+      "icon": "packages/sbp_launcher/assets/icons/elplat.png"
     },
     {
       "bankName": "Экспобанк",
@@ -130,7 +130,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000044",
       "package_name": "ru.ftc.faktura.expobank",
       "webClientUrl": "https://online.expobank.ru/fps/c2b",
-      "icon": "packages/sbp/assets/icons/expobank.png"
+      "icon": "packages/sbp_launcher/assets/icons/expobank.png"
     },
     {
       "bankName": "Банк ВБРР",
@@ -138,7 +138,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000049",
       "package_name": "com.bssys.vbrrretail",
       "webClientUrl": "https://online.vbrr.ru/redirect_anchor/external/fps",
-      "icon": "packages/sbp/assets/icons/vbrr.png"
+      "icon": "packages/sbp_launcher/assets/icons/vbrr.png"
     },
     {
       "bankName": "АБ РОССИЯ",
@@ -146,7 +146,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000095",
       "package_name": "ru.artsofte.russiafl",
       "webClientUrl": "https://i2.abr.ru/c2b/qr",
-      "icon": "packages/sbp/assets/icons/artsofte.png"
+      "icon": "packages/sbp_launcher/assets/icons/artsofte.png"
     },
     {
       "bankName": "КБ Хлынов",
@@ -154,21 +154,21 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000056",
       "package_name": "ru.bank_hlynov.xbank",
       "webClientUrl": "https://xn--i1afg.xn----7sbcg2bhldj1e7c.xn--p1ai/sbp/qr",
-      "icon": "packages/sbp/assets/icons/hlynov.png"
+      "icon": "packages/sbp_launcher/assets/icons/hlynov.png"
     },
     {
       "bankName": "Бланк банк",
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000053.png",
       "schema": "bank100000000053",
       "package_name": "ru.ftc.faktura.vesta",
-      "icon": "packages/sbp/assets/icons/blanc.png"
+      "icon": "packages/sbp_launcher/assets/icons/blanc.png"
     },
     {
       "bankName": "КБ Солидарность",
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000121.png",
       "schema": "bank100000000121",
       "package_name": "com.isimplelab.ibank.solidarnost",
-      "icon": "packages/sbp/assets/icons/solidarnost.png"
+      "icon": "packages/sbp_launcher/assets/icons/solidarnost.png"
     },
     {
       "bankName": "Банк ДОМ.РФ",
@@ -176,14 +176,14 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000082",
       "package_name": "com.bssys.roscapretail",
       "webClientUrl": "https://v.bankdomrf.ru/app/sbp/c2b",
-      "icon": "packages/sbp/assets/icons/roscap.png"
+      "icon": "packages/sbp_launcher/assets/icons/roscap.png"
     },
     {
       "bankName": "Хакасский муниципальный банк",
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000127.png",
       "schema": "bank100000000127",
       "package_name": "ru.ftc.faktura.kbhmb",
-      "icon": "packages/sbp/assets/icons/hakasskii.png"
+      "icon": "packages/sbp_launcher/assets/icons/hakasskii.png"
     },
     {
       "bankName": "МТС-Банк",
@@ -191,7 +191,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000017",
       "package_name": "ru.mts.money",
       "webClientUrl": "https://mdeng.ru/paymentsC2BBank",
-      "icon": "packages/sbp/assets/icons/mts.png"
+      "icon": "packages/sbp_launcher/assets/icons/mts.png"
     },
     {
       "bankName": "Банк ПСКБ",
@@ -199,7 +199,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000087",
       "package_name": "ru.ftc.faktura.pskb",
       "webClientUrl": "https://dbo.pscb.ru/fps/c2b/",
-      "icon": "packages/sbp/assets/icons/mts.png"
+      "icon": "packages/sbp_launcher/assets/icons/mts.png"
     },
     {
       "bankName": "Банк Левобережный",
@@ -207,7 +207,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000052",
       "package_name": "ru.ftc.faktura.nskbl",
       "webClientUrl": "https://bl-online.nskbl.ru/fps/c2b",
-      "icon": "packages/sbp/assets/icons/levoberezhny.png"
+      "icon": "packages/sbp_launcher/assets/icons/levoberezhny.png"
     },
     {
       "bankName": "АК БАРС БАНК",
@@ -215,7 +215,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000006",
       "package_name": "ru.akbars.mobile",
       "webClientUrl": "https://online.akbars.ru/payments/sbp",
-      "icon": "packages/sbp/assets/icons/akbars.png"
+      "icon": "packages/sbp_launcher/assets/icons/akbars.png"
     },
     {
       "bankName": "КБ РостФинанс",
@@ -223,7 +223,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000098",
       "package_name": "ru.ftc.faktura.rostfinance",
       "webClientUrl": "https://online.rostfinance.ru/petition/c2b_sbp/qr",
-      "icon": "packages/sbp/assets/icons/rostfb.png"
+      "icon": "packages/sbp_launcher/assets/icons/rostfb.png"
     },
     {
       "bankName": "БыстроБанк",
@@ -241,7 +241,7 @@ final Map<String, dynamic> c2bmembersData = {
       "bankName": "Кредит Европа Банк (Россия)",
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000027.png",
       "schema": "bank100000000027",
-      "icon": "packages/sbp/assets/icons/kebr.png"
+      "icon": "packages/sbp_launcher/assets/icons/kebr.png"
     },
     {
       "bankName": "АКБ Алмазэргиэнбанк",
@@ -292,7 +292,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000047",
       "package_name": "ru.ftc.faktura.absolutbank",
       "webClientUrl": "https://online.absolutbank.ru/fps/c2b",
-      "icon": "packages/sbp/assets/icons/absolut.png"
+      "icon": "packages/sbp_launcher/assets/icons/absolut.png"
     },
     {
       "bankName": "КБ Модульбанк",
@@ -344,14 +344,14 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000029",
       "package_name": "ru.bspb",
       "webClientUrl": "https://spb.pro/sbp-c2b",
-      "icon": "packages/sbp/assets/icons/bspb.png"
+      "icon": "packages/sbp_launcher/assets/icons/bspb.png"
     },
     {
       "bankName": "КБ Кубань Кредит",
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000050.png",
       "schema": "bank100000000050",
       "package_name": "com.isimplelab.ibank.kubankredit",
-      "icon": "packages/sbp/assets/icons/kubankredit.png"
+      "icon": "packages/sbp_launcher/assets/icons/kubankredit.png"
     },
     {
       "bankName": "Банк НОВИКОМ (НОВИКОМБАНК)",
@@ -359,7 +359,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000177",
       "package_name": "com.bssys.novikomretail",
       "webClientUrl": "https://online.novikom.ru/?i=deeplink/qr.nspk.ru",
-      "icon": "packages/sbp/assets/icons/novikom.png"
+      "icon": "packages/sbp_launcher/assets/icons/novikom.png"
     },
     {
       "bankName": "РосДорБанк",
@@ -400,7 +400,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000034",
       "package_name": "ru.ftc.faktura.tkbbank",
       "webClientUrl": "https://lk.tkbbank.ru/petition/c2b_sbp/qr",
-      "icon": "packages/sbp/assets/icons/tkbbank.png"
+      "icon": "packages/sbp_launcher/assets/icons/tkbbank.png"
     },
     {
       "bankName": "ЧЕЛЯБИНВЕСТБАНК",
@@ -445,7 +445,7 @@ final Map<String, dynamic> c2bmembersData = {
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000014.png",
       "schema": "bank100000000014",
       "package_name": "ru.simpls.brs2.mobbank",
-      "icon": "packages/sbp/assets/icons/brs.png"
+      "icon": "packages/sbp_launcher/assets/icons/brs.png"
     },
     {
       "bankName": "Банк Интеза",
@@ -708,7 +708,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000059",
       "package_name": "ru.centrinvest.mobilebanking2018",
       "webClientUrl": "https://my.centrinvest.ru/paymentFpsQr",
-      "icon": "packages/sbp/assets/icons/centrinvest.png"
+      "icon": "packages/sbp_launcher/assets/icons/centrinvest.png"
     },
     {
       "bankName": "Датабанк",
@@ -741,7 +741,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000045",
       "package_name": "ru.zenit.android",
       "webClientUrl": "https://i.zenit.ru/sbpPay",
-      "icon": "packages/sbp/assets/icons/zenit.png"
+      "icon": "packages/sbp_launcher/assets/icons/zenit.png"
     },
     {
       "bankName": "АКБ ФОРА-БАНК",
@@ -779,7 +779,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000026",
       "package_name": "ru.bankuralsib.mb.android",
       "webClientUrl": "https://online.uralsib.ru/sbp-pay",
-      "icon": "packages/sbp/assets/icons/bankuralsib.png"
+      "icon": "packages/sbp_launcher/assets/icons/bankuralsib.png"
     },
     {
       "bankName": "Инго Банк",
@@ -800,7 +800,7 @@ final Map<String, dynamic> c2bmembersData = {
       "schema": "bank100000000031",
       "package_name": "cb.ibank",
       "webClientUrl": "https://i.ubrr.ru/pjpmt429",
-      "icon": "packages/sbp/assets/icons/ybrir.png"
+      "icon": "packages/sbp_launcher/assets/icons/ybrir.png"
     },
     {
       "bankName": "АКБ Приморье",
@@ -833,7 +833,7 @@ final Map<String, dynamic> c2bmembersData = {
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000018.png",
       "schema": "bank100000000018",
       "package_name": "ru.otpbank.mobile",
-      "icon": "packages/sbp/assets/icons/otpbank.png"
+      "icon": "packages/sbp_launcher/assets/icons/otpbank.png"
     },
     {
       "bankName": "КБ Крокус-Банк",
@@ -846,7 +846,7 @@ final Map<String, dynamic> c2bmembersData = {
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000032.png",
       "schema": "bank100000000032",
       "package_name": "cz.bsc.rc",
-      "icon": "packages/sbp/assets/icons/rc.png"
+      "icon": "packages/sbp_launcher/assets/icons/rc.png"
     },
     {
       "bankName": "УКБ Белгородсоцбанк",
@@ -908,7 +908,7 @@ final Map<String, dynamic> c2bmembersData = {
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000133.png",
       "schema": "bank100000000133",
       "package_name": "com.bifit.mobile.private.bbr",
-      "icon": "packages/sbp/assets/icons/bbr.png"
+      "icon": "packages/sbp_launcher/assets/icons/bbr.png"
     },
     {
       "bankName": "АКБ Ланта-Банк",

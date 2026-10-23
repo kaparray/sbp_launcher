@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sbp/data/c2bmembers_data.dart';
-import 'package:sbp/models/c2bmembers_model.dart';
+import 'package:sbp_launcher/data/c2bmembers_data.dart';
+import 'package:sbp_launcher/models/c2bmembers_model.dart';
 
 void main() {
   test('parses a full NSPK entry and ignores unknown fields', () {
@@ -65,6 +65,7 @@ void main() {
     expect(banks.map((bank) => bank.schema).toSet().length, banks.length);
     // в старом снимке были испорчены package_name вида ru.avangard.packages/sbpent
     expect(banks.where((bank) => bank.packageName.contains('/')), isEmpty);
-    expect(banks.firstWhere((bank) => bank.schema == 'bank100000000111').icon, 'packages/sbp/assets/icons/sber.png');
+    expect(banks.firstWhere((bank) => bank.schema == 'bank100000000111').icon,
+        'packages/sbp_launcher/assets/icons/sber.png');
   });
 }

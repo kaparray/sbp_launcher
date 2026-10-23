@@ -1,8 +1,14 @@
-name: sbp
-description: Flutter plugin, with which you can get a list of banks installed on the user's device, as well as launch a link to pay via SBP like https://qr.nspk.ru/.../
-version: 0.2.0
-repository: https://github.com/smenateam/sbp/tree/master/lib
-homepage: https://github.com/smenateam/sbp
+name: sbp_launcher
+description: "Flutter plugin for SBP payments: detects installed bank apps by their SBP scheme, loads the NSPK bank registry and opens qr.nspk.ru links."
+version: 1.0.0
+homepage: https://github.com/kaparray/sbp_launcher
+repository: https://github.com/kaparray/sbp_launcher
+issue_tracker: https://github.com/kaparray/sbp_launcher/issues
+topics:
+  - sbp
+  - payments
+  - nspk
+  - banking
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -23,7 +29,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: ru.smena.sbp
-        pluginClass: SbpPlugin
+        package: io.github.kaparray.sbp_launcher
+        pluginClass: SbpLauncherPlugin
       ios:
-        pluginClass: SbpPlugin
+        pluginClass: SbpLauncherPlugin

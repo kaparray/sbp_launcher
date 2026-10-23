@@ -1,5 +1,5 @@
-name: sbp_example
-description: Demonstrates how to use the sbp plugin.
+name: sbp_launcher_example
+description: Demonstrates how to use the sbp_launcher plugin.
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -8,7 +8,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  sbp:
+  sbp_launcher:
     path: ../
 
 dev_dependencies:
@@ -21,57 +21,57 @@ dev_dependencies:
 
 flutter:
   assets:
-    - packages/sbp/assets/sbp.png
-    - packages/sbp/assets/icons/absolut.png
-    - packages/sbp/assets/icons/akbars.png
-    - packages/sbp/assets/icons/alfabank.png
-    - packages/sbp/assets/icons/artsofte.png
-    - packages/sbp/assets/icons/avangard.png
-    - packages/sbp/assets/icons/bankuralsib.png
-    - packages/sbp/assets/icons/bbr.png
-    - packages/sbp/assets/icons/blanc.png
-    - packages/sbp/assets/icons/brs.png
-    - packages/sbp/assets/icons/bspb.png
-    - packages/sbp/assets/icons/centrinvest.png
-    - packages/sbp/assets/icons/elplat.png
-    - packages/sbp/assets/icons/expobank.png
-    - packages/sbp/assets/icons/factura.png
-    - packages/sbp/assets/icons/gazprombank.png
-    - packages/sbp/assets/icons/gebank.png
-    - packages/sbp/assets/icons/hakasskii.png
-    - packages/sbp/assets/icons/hlynov.png
-    - packages/sbp/assets/icons/homecredit.png
-    - packages/sbp/assets/icons/kebr.png
-    - packages/sbp/assets/icons/kubankredit.png
-    - packages/sbp/assets/icons/letobank.png
-    - packages/sbp/assets/icons/levoberezhny.png
-    - packages/sbp/assets/icons/mkb.png
-    - packages/sbp/assets/icons/mosoblbank.png
-    - packages/sbp/assets/icons/mts.png
-    - packages/sbp/assets/icons/novikom.png
-    - packages/sbp/assets/icons/openbank.png
-    - packages/sbp/assets/icons/otpbank.png
-    - packages/sbp/assets/icons/pcb.png
-    - packages/sbp/assets/icons/pskb.png
-    - packages/sbp/assets/icons/qivi.png
-    - packages/sbp/assets/icons/raiffeisen.png
-    - packages/sbp/assets/icons/rc.png
-    - packages/sbp/assets/icons/rncb.png
-    - packages/sbp/assets/icons/rosbank.png
-    - packages/sbp/assets/icons/roscap.png
-    - packages/sbp/assets/icons/rostfb.png
-    - packages/sbp/assets/icons/rshb.png
-    - packages/sbp/assets/icons/sber.png
-    - packages/sbp/assets/icons/sinara.png
-    - packages/sbp/assets/icons/smp.png
-    - packages/sbp/assets/icons/solidarnost.png
-    - packages/sbp/assets/icons/sovcomcard.png
-    - packages/sbp/assets/icons/tinkoff.png
-    - packages/sbp/assets/icons/tkbbank.png
-    - packages/sbp/assets/icons/ucb.png
-    - packages/sbp/assets/icons/vbrr.png
-    - packages/sbp/assets/icons/vtb.png
-    - packages/sbp/assets/icons/ybrir.png
-    - packages/sbp/assets/icons/zenit.png
+    - packages/sbp_launcher/assets/sbp.png
+    - packages/sbp_launcher/assets/icons/absolut.png
+    - packages/sbp_launcher/assets/icons/akbars.png
+    - packages/sbp_launcher/assets/icons/alfabank.png
+    - packages/sbp_launcher/assets/icons/artsofte.png
+    - packages/sbp_launcher/assets/icons/avangard.png
+    - packages/sbp_launcher/assets/icons/bankuralsib.png
+    - packages/sbp_launcher/assets/icons/bbr.png
+    - packages/sbp_launcher/assets/icons/blanc.png
+    - packages/sbp_launcher/assets/icons/brs.png
+    - packages/sbp_launcher/assets/icons/bspb.png
+    - packages/sbp_launcher/assets/icons/centrinvest.png
+    - packages/sbp_launcher/assets/icons/elplat.png
+    - packages/sbp_launcher/assets/icons/expobank.png
+    - packages/sbp_launcher/assets/icons/factura.png
+    - packages/sbp_launcher/assets/icons/gazprombank.png
+    - packages/sbp_launcher/assets/icons/gebank.png
+    - packages/sbp_launcher/assets/icons/hakasskii.png
+    - packages/sbp_launcher/assets/icons/hlynov.png
+    - packages/sbp_launcher/assets/icons/homecredit.png
+    - packages/sbp_launcher/assets/icons/kebr.png
+    - packages/sbp_launcher/assets/icons/kubankredit.png
+    - packages/sbp_launcher/assets/icons/letobank.png
+    - packages/sbp_launcher/assets/icons/levoberezhny.png
+    - packages/sbp_launcher/assets/icons/mkb.png
+    - packages/sbp_launcher/assets/icons/mosoblbank.png
+    - packages/sbp_launcher/assets/icons/mts.png
+    - packages/sbp_launcher/assets/icons/novikom.png
+    - packages/sbp_launcher/assets/icons/openbank.png
+    - packages/sbp_launcher/assets/icons/otpbank.png
+    - packages/sbp_launcher/assets/icons/pcb.png
+    - packages/sbp_launcher/assets/icons/pskb.png
+    - packages/sbp_launcher/assets/icons/qivi.png
+    - packages/sbp_launcher/assets/icons/raiffeisen.png
+    - packages/sbp_launcher/assets/icons/rc.png
+    - packages/sbp_launcher/assets/icons/rncb.png
+    - packages/sbp_launcher/assets/icons/rosbank.png
+    - packages/sbp_launcher/assets/icons/roscap.png
+    - packages/sbp_launcher/assets/icons/rostfb.png
+    - packages/sbp_launcher/assets/icons/rshb.png
+    - packages/sbp_launcher/assets/icons/sber.png
+    - packages/sbp_launcher/assets/icons/sinara.png
+    - packages/sbp_launcher/assets/icons/smp.png
+    - packages/sbp_launcher/assets/icons/solidarnost.png
+    - packages/sbp_launcher/assets/icons/sovcomcard.png
+    - packages/sbp_launcher/assets/icons/tinkoff.png
+    - packages/sbp_launcher/assets/icons/tkbbank.png
+    - packages/sbp_launcher/assets/icons/ucb.png
+    - packages/sbp_launcher/assets/icons/vbrr.png
+    - packages/sbp_launcher/assets/icons/vtb.png
+    - packages/sbp_launcher/assets/icons/ybrir.png
+    - packages/sbp_launcher/assets/icons/zenit.png
 
   uses-material-design: true

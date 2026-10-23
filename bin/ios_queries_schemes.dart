@@ -1,10 +1,10 @@
 // Список LSApplicationQueriesSchemes для Info.plist (iOS учитывает не больше 50 схем).
 //
-// Из приложения, которое подключает sbp:
-//   dart run sbp:ios_queries_schemes                                  # напечатать рекомендуемый список
-//   dart run sbp:ios_queries_schemes --write=ios/Runner/Info.plist    # записать в Info.plist
-//   dart run sbp:ios_queries_schemes --remove=bank100000000022 --add=bank100000000153 --write=ios/Runner/Info.plist
-//   dart run sbp:ios_queries_schemes --only=bank100000000111,bank100000000004 --write=ios/Runner/Info.plist
+// Из приложения, которое подключает sbp_launcher:
+//   dart run sbp_launcher:ios_queries_schemes                                  # напечатать рекомендуемый список
+//   dart run sbp_launcher:ios_queries_schemes --write=ios/Runner/Info.plist    # записать в Info.plist
+//   dart run sbp_launcher:ios_queries_schemes --remove=bank100000000022 --add=bank100000000153 --write=ios/Runner/Info.plist
+//   dart run sbp_launcher:ios_queries_schemes --only=bank100000000111,bank100000000004 --write=ios/Runner/Info.plist
 //
 // --only    - свой список вместо рекомендуемого sbpIosPriorityBankSchemes
 // --add     - добавить схемы (через запятую)
@@ -13,8 +13,8 @@
 // --force   - разрешить схемы, которых нет во встроенном реестре, и больше 50 записей
 import 'dart:io';
 
-import 'package:sbp/data/c2bmembers_data.dart';
-import 'package:sbp/data/sbp_bank_lists.dart';
+import 'package:sbp_launcher/data/c2bmembers_data.dart';
+import 'package:sbp_launcher/data/sbp_bank_lists.dart';
 
 const _limit = 50;
 
@@ -57,7 +57,8 @@ void main(List<String> args) {
   }
 
   final block = StringBuffer()
-    ..writeln('\t<!-- iOS учитывает не больше $_limit схем. Сгенерировано: dart run sbp:ios_queries_schemes -->')
+    ..writeln(
+        '\t<!-- iOS учитывает не больше $_limit схем. Сгенерировано: dart run sbp_launcher:ios_queries_schemes -->')
     ..writeln('\t<key>LSApplicationQueriesSchemes</key>')
     ..writeln('\t<array>');
   for (final schema in schemes) {

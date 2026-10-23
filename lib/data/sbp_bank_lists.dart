@@ -15,9 +15,9 @@
 /// Порядок в списке не важен, но не добавляйте в Info.plist больше 50 схем.
 ///
 /// Список можно отредактировать под себя: `Info.plist` принадлежит приложению.
-///   dart run sbp:ios_queries_schemes --write=ios/Runner/Info.plist                  # рекомендуемый список
-///   dart run sbp:ios_queries_schemes --remove=bank... --add=bank... --write=...     # поправить его
-///   dart run sbp:ios_queries_schemes --only=bank...,bank... --write=...             # полностью свой
+///   dart run sbp_launcher:ios_queries_schemes --write=ios/Runner/Info.plist                  # рекомендуемый список
+///   dart run sbp_launcher:ios_queries_schemes --remove=bank... --add=bank... --write=...     # поправить его
+///   dart run sbp_launcher:ios_queries_schemes --only=bank...,bank... --write=...             # полностью свой
 /// После изменения Info.plist нужна полная пересборка (hot reload не подхватит).
 const List<String> sbpIosPriorityBankSchemes = [
   // крупнейшие по вкладам физлиц

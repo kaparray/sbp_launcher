@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
 
-public class SwiftSbpPlugin: NSObject, FlutterPlugin {
+public class SwiftSbpLauncherPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "sbp", binaryMessenger: registrar.messenger())
-    let instance = SwiftSbpPlugin()
+    let channel = FlutterMethodChannel(name: "sbp_launcher", binaryMessenger: registrar.messenger())
+    let instance = SwiftSbpLauncherPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 

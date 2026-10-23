@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sbp/data/c2bmembers_data.dart';
-import 'package:sbp/sbp.dart';
+import 'package:sbp_launcher/data/c2bmembers_data.dart';
+import 'package:sbp_launcher/sbp_launcher.dart';
 
 const _url = 'https://qr.nspk.ru/AS1000?type=02&bank=100000000111&sum=10000&cur=RUB&crc=AB75';
 
@@ -20,7 +20,7 @@ C2bmembersModel _model() => C2bmembersModel.fromJson({
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  const channel = MethodChannel('sbp');
+  const channel = MethodChannel('sbp_launcher');
   final calls = <MethodCall>[];
 
   void mockChannel(Object? Function(MethodCall call) handler) {

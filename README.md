@@ -1,14 +1,27 @@
-# sbp
+# sbp_launcher
 
 [Русский](#русский) · [English](#english)
 
-Flutter plugin, with which you can get a list of banks installed on the user's device, as well as
-launch a link to pay via SBP (Система быстрых платежей) of the form `https://qr.nspk.ru/.../`.
+Flutter-плагин для оплаты через СБП (Система быстрых платежей): находит установленные банковские приложения
+по схеме СБП без статического списка пакетов, берёт реестр банков с портала НСПК и открывает ссылки
+`https://qr.nspk.ru/...` в приложении банка с честным результатом.
 
-<p float="left">
- <img src="https://github.com/smenateam/sbp/blob/master/doc/screenshots/sbp_android1.jpg?raw=true" height="600">
- <img src="https://github.com/smenateam/sbp/blob/master/doc/screenshots/sbp_android2.jpg?raw=true" height="600">
-</p>
+Flutter plugin for SBP payments: detects installed bank apps by their SBP scheme, loads the NSPK bank registry
+and opens `https://qr.nspk.ru/...` links in the bank app with a real open result.
+
+```yaml
+dependencies:
+  sbp_launcher:
+    git:
+      url: https://github.com/kaparray/sbp_launcher.git
+```
+
+```dart
+import 'package:sbp_launcher/sbp_launcher.dart';
+```
+
+Основан на плагине [smenateam/sbp](https://github.com/smenateam/sbp) (BSD-3-Clause) ·
+Based on [smenateam/sbp](https://github.com/smenateam/sbp) (BSD-3-Clause).
 
 ---
 
@@ -17,7 +30,7 @@ launch a link to pay via SBP (Система быстрых платежей) of
 ### Быстрый старт
 
 ```dart
-import 'package:sbp/sbp.dart';
+import 'package:sbp_launcher/sbp_launcher.dart';
 
 // 1. Список банков: портал НСПК → кэш на устройстве (24 ч) → встроенный снимок
 final loaded = await C2bmembersRepository().load(); // https://qr.nspk.ru/proxyapp/c2bmembers.json
@@ -84,7 +97,7 @@ final banks = await Sbp.getBanks(
 
 ### Android
 
-**Начиная с 0.2.0 больше не нужен `<queries>` со списком пакетов банков.** Плагин сам объявляет в
+**`<queries>` со списком пакетов банков не нужен.** Плагин сам объявляет в
 своём манифесте (он попадает в приложение через manifest merge):
 
 ```xml
@@ -169,7 +182,7 @@ await Sbp.getBanks(model, extraAndroidPackageNames: {
 Записать рекомендуемый список в `Info.plist` вашего приложения (команда запускается из корня приложения):
 
 ```bash
-dart run sbp:ios_queries_schemes --write=ios/Runner/Info.plist
+dart run sbp_launcher:ios_queries_schemes --write=ios/Runner/Info.plist
 ```
 
 Пример — [example/ios/Runner/Info.plist](example/ios/Runner/Info.plist).
@@ -195,7 +208,7 @@ curl -s https://qr.nspk.ru/proxyapp/c2bmembers.json \
 Командой — добавить и убрать схемы относительно рекомендуемого списка:
 
 ```bash
-dart run sbp:ios_queries_schemes \
+dart run sbp_launcher:ios_queries_schemes \
   --remove=bank100000000022,bank100000000289 \
   --add=bank100000000153,bank100000000059 \
   --write=ios/Runner/Info.plist
@@ -204,7 +217,7 @@ dart run sbp:ios_queries_schemes \
 Или задать полностью свой список:
 
 ```bash
-dart run sbp:ios_queries_schemes --only=bank100000000111,bank100000000004,bank110000000005 --write=ios/Runner/Info.plist
+dart run sbp_launcher:ios_queries_schemes --only=bank100000000111,bank100000000004,bank110000000005 --write=ios/Runner/Info.plist
 ```
 
 Без `--write` команда только печатает блок `LSApplicationQueriesSchemes`. Команда проверяет, что схем
@@ -229,8 +242,8 @@ dart run sbp:ios_queries_schemes --only=bank100000000111,bank100000000004,bank11
 `getInstalledBanks`:
 
 ```
-sbp: LSApplicationQueriesSchemes has 61 entries, iOS uses only the first 50. See sbpIosPriorityBankSchemes.
-sbp: 12 of 195 banks cannot be detected on iOS (...)
+sbp_launcher: LSApplicationQueriesSchemes has 61 entries, iOS uses only the first 50. See sbpIosPriorityBankSchemes.
+sbp_launcher: 12 of 195 banks cannot be detected on iOS (...)
 ```
 
 Правила:
@@ -255,8 +268,8 @@ sbp: 12 of 195 banks cannot be detected on iOS (...)
 ```yaml
 flutter:
   assets:
-    - packages/sbp/assets/sbp.png
-    - packages/sbp/assets/icons/sber.png
+    - packages/sbp_launcher/assets/sbp.png
+    - packages/sbp_launcher/assets/icons/sber.png
     # ...
 ```
 
@@ -269,7 +282,7 @@ flutter:
 ```bash
 flutter test                                   # Dart: парсинг, репозиторий, API, MethodChannel
 cd example && flutter test                     # виджет-тест примера
-cd example/android && ./gradlew :sbp:testDebugUnitTest   # Kotlin: определение банков (JVM)
+cd example/android && ./gradlew :sbp_launcher:testDebugUnitTest   # Kotlin: определение банков (JVM)
 ```
 
 Интеграционные тесты идут на настоящей ОС против fake-банков. Это крошечные приложения, которые
@@ -293,10 +306,13 @@ flutter test integration_test -d <simulator> --dart-define=SBP_IOS_INTERACTIVE=t
 `EMULATOR_GPU=host`: на arm64-образе API 30 с программным GPU Flutter зависает на старте. Логи и `summary.txt` пишутся в
 `example/build/sbp_matrix/`.
 
-### Миграция с 0.1.x
+### Переход с плагина sbp 0.1.x
 
-| 0.1.x | 0.2.0 |
+| sbp 0.1.x | sbp_launcher |
 | --- | --- |
+| `sbp: ^0.1.1` в `pubspec.yaml` | `sbp_launcher` (см. начало README) |
+| `import 'package:sbp/sbp.dart'` | `import 'package:sbp_launcher/sbp_launcher.dart'` |
+| иконки `packages/sbp/assets/...` | `packages/sbp_launcher/assets/...` |
 | `Sbp.openBank(url, bank) -> bool` | `Sbp.launchBank(url, bank) -> SbpOpenResult` (`openBank` работает, помечен `@Deprecated`) |
 | `C2bmembersModel.fromJson(c2bmembersData)` | `C2bmembersRepository().load()` / `Sbp.loadBanks()` |
 | `<queries>` с `<package>` банков в приложении | не нужен |
@@ -313,7 +329,7 @@ flutter test integration_test -d <simulator> --dart-define=SBP_IOS_INTERACTIVE=t
 ### Quick start
 
 ```dart
-import 'package:sbp/sbp.dart';
+import 'package:sbp_launcher/sbp_launcher.dart';
 
 final loaded = await C2bmembersRepository().load(); // NSPK registry: https://qr.nspk.ru/proxyapp/c2bmembers.json
 final banks = await Sbp.getBanks(loaded.model); // banks.installed first, banks.others below — both can be opened
@@ -333,7 +349,7 @@ Regenerate the bundled snapshot with `dart run tool/update_c2bmembers.dart`.
 
 ### Android
 
-**Since 0.2.0 you no longer need a `<queries>` block listing bank packages.** The plugin manifest declares
+**You don't need a `<queries>` block listing bank packages.** The plugin manifest declares
 `VIEW` intent queries for `*://qr.nspk.ru` and `https://qr.nspk.ru`. A bank is installed when some activity
 resolves `<schema>://qr.nspk.ru/` (`queryIntentActivities`, `MATCH_DEFAULT_ONLY`); `https://qr.nspk.ru`
 handlers are matched by `package_name` as a second source. New banks work without a plugin or app release,
@@ -359,18 +375,19 @@ which includes the new RSHB app `ru.rshb.ownfinance`).
 open them with `launchBank` (from a user tap: otherwise iOS shows a "wants to open" alert, and Cancel is
 reported as `notInstalled`) — `UIApplication.open` does not need the allow-list, and the plugin returns the
 real result from its completion handler. A recommended list is `sbpIosPriorityBankSchemes`
-(`dart run sbp:ios_queries_schemes --write=ios/Runner/Info.plist` writes it). The list is only a
+(`dart run sbp_launcher:ios_queries_schemes --write=ios/Runner/Info.plist` writes it). The list is only a
 recommendation — edit it with `--add=`, `--remove=` or `--only=` (comma-separated schemes, max 50), or by hand in
 `Info.plist`, then do a full rebuild; a list built from your own payment analytics is better. Requires iOS 12.0+.
 
 ### Tests
 
-`flutter test` (Dart), `./gradlew :sbp:testDebugUnitTest` in `example/android` (Kotlin), and integration tests
+`flutter test` (Dart), `./gradlew :sbp_launcher:testDebugUnitTest` in `example/android` (Kotlin), and integration tests
 against fake bank apps on real emulators/simulators: `example/integration_test/run_matrix.sh android 21 36` or
 `run_matrix.sh ios <runtime id>`.
 
-### Migration from 0.1.x
+### Migrating from sbp 0.1.x
 
-`openBank` is deprecated in favour of `launchBank`; `getInstalledBanks`, `openAndroidBank` and `openBankIOS`
+Replace the `sbp` dependency with `sbp_launcher`, imports with `package:sbp_launcher/sbp_launcher.dart` and asset
+paths `packages/sbp/assets/...` with `packages/sbp_launcher/assets/...`. `openBank` is deprecated in favour of `launchBank`; `getInstalledBanks`, `openAndroidBank` and `openBankIOS`
 keep their signatures. `openBankIOS` now returns `false` when the link did not open. Remove bank
 `<package>` entries from your manifest and trim `LSApplicationQueriesSchemes` to 50 entries.

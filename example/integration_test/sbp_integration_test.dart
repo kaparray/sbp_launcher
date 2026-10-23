@@ -11,8 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sbp/data/c2bmembers_data.dart';
-import 'package:sbp/sbp.dart';
+import 'package:sbp_launcher/data/c2bmembers_data.dart';
+import 'package:sbp_launcher/sbp_launcher.dart';
 
 const _url = 'https://qr.nspk.ru/AS10003P3RH0LJ2A9ROO038L6NT5RU1M?type=01&bank=000000000001&sum=10000&cur=RUB&crc=F3D0';
 
@@ -77,7 +77,7 @@ void main() {
       stopwatch.stop();
 
       // ignore: avoid_print
-      print('sbp: ${installed.length} installed of ${(c2bmembersData['dictionary'] as List).length} '
+      print('sbp_launcher: ${installed.length} installed of ${(c2bmembersData['dictionary'] as List).length} '
           'in ${stopwatch.elapsedMilliseconds} ms');
       expect(_schemas(installed), contains(_sber));
       expect(stopwatch.elapsed, lessThan(const Duration(seconds: 10)));
@@ -142,7 +142,7 @@ void main() {
 
   group('iOS', skip: !Platform.isIOS, () {
     test('Info.plist has the recommended 50 schemes', () async {
-      final schemes = await const MethodChannel('sbp').invokeListMethod<String>('getQueriesSchemes');
+      final schemes = await const MethodChannel('sbp_launcher').invokeListMethod<String>('getQueriesSchemes');
 
       expect(schemes, sbpIosPriorityBankSchemes);
     });

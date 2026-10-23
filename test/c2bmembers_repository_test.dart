@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:sbp/data/c2bmembers_data.dart';
-import 'package:sbp/data/c2bmembers_repository.dart';
+import 'package:sbp_launcher/data/c2bmembers_data.dart';
+import 'package:sbp_launcher/data/c2bmembers_repository.dart';
 
 const _url = C2bmembersRepository.defaultUrl;
 
@@ -152,7 +152,7 @@ void main() {
       respond: () => http.Response(_registry(['bank100000000111']), 200),
     ).load();
 
-    expect(result.model.c2bmembersModel.single.icon, 'packages/sbp/assets/icons/sber.png');
+    expect(result.model.c2bmembersModel.single.icon, 'packages/sbp_launcher/assets/icons/sber.png');
   });
 
   test('response body is decoded as UTF-8 regardless of headers', () async {

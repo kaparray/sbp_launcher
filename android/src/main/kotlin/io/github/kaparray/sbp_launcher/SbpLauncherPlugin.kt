@@ -1,4 +1,4 @@
-package ru.smena.sbp
+package io.github.kaparray.sbp_launcher
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -25,8 +25,8 @@ import java.io.ByteArrayOutputStream
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-/** SbpPlugin */
-class SbpPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
+/** SbpLauncherPlugin */
+class SbpLauncherPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
     private var activity: Activity? = null
@@ -38,7 +38,7 @@ class SbpPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         context = binding.applicationContext
         executor = Executors.newSingleThreadExecutor()
-        channel = MethodChannel(binding.binaryMessenger, "sbp")
+        channel = MethodChannel(binding.binaryMessenger, "sbp_launcher")
         channel.setMethodCallHandler(this)
     }
 

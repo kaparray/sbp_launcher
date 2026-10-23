@@ -1,4 +1,4 @@
-package ru.smena.sbp
+package io.github.kaparray.sbp_launcher
 
 /**
  * Банк из c2bmembers.json, который нужно найти на устройстве.

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sbp/sbp.dart';
-import 'package:sbp_example/main.dart';
+import 'package:sbp_launcher/sbp_launcher.dart';
+import 'package:sbp_launcher_example/main.dart';
 
 C2bmemberModel _bank(String schema, String name) => C2bmembersModel.fromJson({
       'dictionary': [

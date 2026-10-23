@@ -1,17 +1,17 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint sbp.podspec` to validate before publishing.
+# Run `pod lib lint sbp_launcher.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'sbp'
-  s.version          = '0.2.0'
-  s.summary          = 'Installed SBP bank apps detection and SBP payment links.'
+  s.name             = 'sbp_launcher'
+  s.version          = '1.0.0'
+  s.summary          = 'Detects installed SBP bank apps and opens qr.nspk.ru payment links.'
   s.description      = <<-DESC
-Flutter plugin: list of SBP bank apps installed on the device and opening SBP payment links (https://qr.nspk.ru/...).
+Flutter plugin for SBP payments: detects installed bank apps by their SBP scheme, loads the NSPK bank registry and opens qr.nspk.ru links.
                        DESC
-  s.homepage         = 'https://github.com/smenateam/sbp'
+  s.homepage         = 'https://github.com/kaparray/sbp_launcher'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'smenateam' => 'https://github.com/smenateam' }
+  s.author           = { 'kaparray' => 'https://github.com/kaparray' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'

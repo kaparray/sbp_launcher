@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Sbp Example</string>
+	<string>SBP Launcher</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>sbp_example</string>
+	<string>sbp_launcher_example</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -35,7 +35,7 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FlutterDeepLinkingEnabled</key>
 	<false/>
-	<!-- iOS учитывает не больше 50 схем. Сгенерировано: dart run sbp:ios_queries_schemes -->
+	<!-- iOS учитывает не больше 50 схем. Сгенерировано: dart run sbp_launcher:ios_queries_schemes -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>bank100000000111</string><!-- Сбербанк -->

@@ -5,14 +5,14 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - sbp (0.2.0):
+  - sbp_launcher (1.0.0):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
-  - sbp (from `.symlinks/plugins/sbp/ios`)
+  - sbp_launcher (from `.symlinks/plugins/sbp_launcher/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
@@ -21,14 +21,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/integration_test/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
-  sbp:
-    :path: ".symlinks/plugins/sbp/ios"
+  sbp_launcher:
+    :path: ".symlinks/plugins/sbp_launcher/ios"
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  sbp: 38a02050ba8dc6f39460d3272d21a9790672ff44
+  sbp_launcher: 66ce501b5f6742a79e96a2ed2f4385c2a527ef80
 
 PODFILE CHECKSUM: 4305caec6b40dde0ae97be1573c53de1882a07e5
 

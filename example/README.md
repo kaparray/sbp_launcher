@@ -1,4 +1,4 @@
-# sbp_example
+# sbp_launcher_example
 
 Demonstrates how to use the sbp plugin.
 

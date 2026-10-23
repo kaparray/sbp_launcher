@@ -4,8 +4,8 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:sbp/data/c2bmembers_data.dart';
-import 'package:sbp/models/c2bmembers_model.dart';
+import 'package:sbp_launcher/data/c2bmembers_data.dart';
+import 'package:sbp_launcher/models/c2bmembers_model.dart';
 
 /// Откуда взят список банков
 enum C2bmembersSource {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sbp/sbp.dart';
+import 'package:sbp_launcher/sbp_launcher.dart';
 
 void main() {
   runApp(const MyApp());
@@ -179,7 +179,7 @@ class _Header extends StatelessWidget {
           decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: Colors.grey),
         ),
         const SizedBox(height: 20),
-        Image.asset('packages/sbp/assets/sbp.png', width: 100),
+        Image.asset('packages/sbp_launcher/assets/sbp.png', width: 100),
         const SizedBox(height: 10),
         const Text('Выберите банк для оплаты по СБП'),
         Text('Список банков: ${source.name}', style: Theme.of(context).textTheme.bodySmall),

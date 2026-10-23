@@ -1,4 +1,4 @@
-package ru.smena.sbp
+package io.github.kaparray.sbp_launcher
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
