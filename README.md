@@ -9,12 +9,14 @@ Flutter-плагин для оплаты через СБП (Система бы�
 Flutter plugin for SBP payments: detects installed bank apps by their SBP scheme, loads the NSPK bank registry
 and opens `https://qr.nspk.ru/...` links in the bank app with a real open result.
 
+[![pub package](https://img.shields.io/pub/v/sbp_launcher.svg)](https://pub.dev/packages/sbp_launcher)
+
 ```yaml
 dependencies:
-  sbp_launcher:
-    git:
-      url: https://github.com/kaparray/sbp_launcher.git
+  sbp_launcher: ^1.0.0
 ```
+
+или / or `flutter pub add sbp_launcher`
 
 ```dart
 import 'package:sbp_launcher/sbp_launcher.dart';

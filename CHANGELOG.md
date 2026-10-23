@@ -1,3 +1,6 @@
+## 1.0.1
+* README: install from pub.dev (`sbp_launcher: ^1.0.0`) instead of a git dependency
+
 ## 1.0.0
 First release of `sbp_launcher`, based on [smenateam/sbp](https://github.com/smenateam/sbp) 0.1.1.
 Dynamic bank list and package-list-free bank detection.

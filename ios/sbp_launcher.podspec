@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'sbp_launcher'
-  s.version          = '1.0.0'
+  s.version          = '1.0.1'
   s.summary          = 'Detects installed SBP bank apps and opens qr.nspk.ru payment links.'
   s.description      = <<-DESC
 Flutter plugin for SBP payments: detects installed bank apps by their SBP scheme, loads the NSPK bank registry and opens qr.nspk.ru links.

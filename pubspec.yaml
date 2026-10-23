@@ -1,6 +1,6 @@
 name: sbp_launcher
 description: "Flutter plugin for SBP payments: detects installed bank apps by their SBP scheme, loads the NSPK bank registry and opens qr.nspk.ru links."
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/kaparray/sbp_launcher
 repository: https://github.com/kaparray/sbp_launcher
 issue_tracker: https://github.com/kaparray/sbp_launcher/issues
