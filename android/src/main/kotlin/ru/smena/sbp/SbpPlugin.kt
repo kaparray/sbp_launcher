@@ -88,7 +88,7 @@ class SbpPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         executor.execute {
             try {
                 val pm = context.packageManager
-                val installed = BankAppResolver { uri -> queryHandlers(pm, uri) }
+                val installed = BankAppResolver { uri -> queryHandlers(pm, uri, matchAll = uri == BankAppResolver.NSPK_HTTPS_URI) }
                     .resolve(banks)
                     .map { bank ->
                         val appInfo = applicationInfo(pm, bank.packageName)
@@ -120,12 +120,18 @@ class SbpPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             return
         }
         val packageName = call.argument<String>("package_name")?.takeIf { it.isNotBlank() }
+        // исходная https-ссылка: для приложений, которые открывают только https://qr.nspk.ru
+        val httpsUri = call.argument<String>("https_url")?.let { Uri.parse(it) }?.takeIf { it.scheme == "https" }
 
-        val attempts = if (packageName != null) listOf(packageName, null) else listOf(null)
+        val attempts = buildList {
+            if (packageName != null) add(uri to packageName)
+            add(uri to null)
+            if (packageName != null && httpsUri != null) add(httpsUri to packageName)
+        }
         var lastError: Exception? = null
-        for (targetPackage in attempts) {
+        for ((targetUri, targetPackage) in attempts) {
             try {
-                startView(uri, targetPackage)
+                startView(targetUri, targetPackage)
                 result.success(true)
                 return
             } catch (exception: ActivityNotFoundException) {
@@ -153,16 +159,23 @@ class SbpPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
-    private fun queryHandlers(pm: PackageManager, uri: String): List<String> {
+    /**
+     * [matchAll] - для https: с Android 12 приложения без подтверждённого домена (App Links)
+     * не считаются обработчиками https://qr.nspk.ru по умолчанию, а подтвердить этот домен банк
+     * не может. Поэтому без MATCH_DEFAULT_ONLY и с MATCH_ALL; пакет всё равно сверяется со списком банка.
+     */
+    private fun queryHandlers(pm: PackageManager, uri: String, matchAll: Boolean = false): List<String> {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        val flags = when {
+            !matchAll -> PackageManager.MATCH_DEFAULT_ONLY
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> PackageManager.MATCH_ALL
+            else -> 0
+        }
         val handlers: List<ResolveInfo> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            pm.queryIntentActivities(
-                intent,
-                PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong()),
-            )
+            pm.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))
         } else {
             @Suppress("DEPRECATION")
-            pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            pm.queryIntentActivities(intent, flags)
         }
         return handlers.mapNotNull { it.activityInfo?.packageName }.distinct()
     }

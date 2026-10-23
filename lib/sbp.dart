@@ -207,9 +207,13 @@ class Sbp {
       }
       if (_isAndroid) {
         final packageName = bank.installedPackageName ?? bank.packageName;
-        return await openAndroidBank(bankLink(url, bank.schema), packageName)
-            ? SbpOpenResult.opened
-            : SbpOpenResult.notInstalled;
+        final opened = await _channel.invokeMethod<bool>('openBank', {
+          'url': bankLink(url, bank.schema),
+          'package_name': packageName,
+          // приложение банка может открывать только https://qr.nspk.ru (без своей схемы)
+          if (url.toLowerCase().startsWith('https://')) 'https_url': url,
+        });
+        return opened == true ? SbpOpenResult.opened : SbpOpenResult.notInstalled;
       }
       return SbpOpenResult.error;
     } on PlatformException catch (exception) {

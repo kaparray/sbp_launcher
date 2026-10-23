@@ -120,6 +120,7 @@ void main() {
       expect(calls.single.arguments, {
         'url': 'bank100000000111://qr.nspk.ru/AS1000?type=02&bank=100000000111&sum=10000&cur=RUB&crc=AB75',
         'package_name': 'ru.sberbankmobile.real',
+        'https_url': _url,
       });
     });
 
