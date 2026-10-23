@@ -2,59 +2,59 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- До 50 приоритетных банков (лимит iOS 15+). Остальные показываются как «другие банки». -->
+	<!-- iOS учитывает не больше 50 схем. Сгенерировано tool/ios_queries_schemes.dart -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-		<string>bank100000000111</string>
-		<string>bank100000000004</string>
-		<string>bank110000000005</string>
-		<string>bank100000000008</string>
-		<string>bank100000000007</string>
-		<string>bank100000000001</string>
-		<string>bank100000000010</string>
-		<string>bank100000000013</string>
-		<string>bank100000000020</string>
-		<string>bank100000000025</string>
-		<string>bank100000000030</string>
-		<string>bank100000000003</string>
-		<string>bank100000000043</string>
-		<string>bank100000000028</string>
-		<string>bank100000000086</string>
-		<string>bank100000000044</string>
-		<string>bank100000000049</string>
-		<string>bank100000000095</string>
-		<string>bank100000000056</string>
-		<string>bank100000000053</string>
-		<string>bank100000000121</string>
-		<string>bank100000000082</string>
-		<string>bank100000000127</string>
-		<string>bank100000000017</string>
-		<string>bank100000000087</string>
-		<string>bank100000000052</string>
-		<string>bank100000000006</string>
-		<string>bank100000000098</string>
-		<string>bank100000000092</string>
-		<string>bank100000000229</string>
-		<string>bank100000000027</string>
-		<string>bank100000000080</string>
-		<string>bank100000000122</string>
-		<string>bank100000000124</string>
-		<string>bank100000000159</string>
-		<string>bank100000000146</string>
-		<string>bank100000000069</string>
-		<string>bank100000000140</string>
-		<string>bank100000000047</string>
-		<string>bank100000000099</string>
-		<string>bank100000000135</string>
-		<string>bank100000000139</string>
-		<string>bank100000000166</string>
-		<string>bank100000000172</string>
-		<string>bank100000000187</string>
-		<string>bank100000000022</string>
-		<string>bank100000000029</string>
-		<string>bank100000000050</string>
-		<string>bank100000000177</string>
-		<string>bank100000000084</string>
+		<string>bank100000000111</string><!-- Сбербанк -->
+		<string>bank110000000005</string><!-- Банк ВТБ -->
+		<string>bank100000000008</string><!-- АЛЬФА-БАНК -->
+		<string>bank100000000004</string><!-- Т-Банк -->
+		<string>bank100000000001</string><!-- Газпромбанк -->
+		<string>bank100000000020</string><!-- РСХБ -->
+		<string>bank100000000013</string><!-- Совкомбанк -->
+		<string>bank100000000025</string><!-- МОСКОВСКИЙ КРЕДИТНЫЙ БАНК -->
+		<string>bank100000000082</string><!-- Банк ДОМ.РФ -->
+		<string>bank100000000029</string><!-- Банк Санкт-Петербург (БСПБ) -->
+		<string>bank100000000017</string><!-- МТС-Банк -->
+		<string>bank100000000095</string><!-- АБ РОССИЯ -->
+		<string>bank100000000026</string><!-- БАНК УРАЛСИБ -->
+		<string>bank100000000150</string><!-- Яндекс -->
+		<string>bank100000000031</string><!-- КБ УБРиР -->
+		<string>bank100000000050</string><!-- КБ Кубань Кредит -->
+		<string>bank100000000034</string><!-- ТКБ БАНК -->
+		<string>bank100000000006</string><!-- АК БАРС БАНК -->
+		<string>bank100000000014</string><!-- Банк Русский Стандарт -->
+		<string>bank100000000047</string><!-- АКБ Абсолют Банк -->
+		<string>bank100000000108</string><!-- Азиатско-Тихоокеанский Банк -->
+		<string>bank100000000177</string><!-- Банк НОВИКОМ (НОВИКОМБАНК) -->
+		<string>bank100000000045</string><!-- Банк ЗЕНИТ -->
+		<string>bank100000000044</string><!-- Экспобанк -->
+		<string>bank100000000161</string><!-- КБ ЛОКО-Банк -->
+		<string>bank100000000018</string><!-- ОТП Банк (OTP Bank) -->
+		<string>bank100000000046</string><!-- Металлинвестбанк -->
+		<string>bank100000000088</string><!-- СКБ Приморья Примсоцбанк -->
+		<string>bank100000000059</string><!-- КБ Центр-инвест -->
+		<string>bank100000000052</string><!-- Банк Левобережный -->
+		<string>bank100000000069</string><!-- СДМ-Банк -->
+		<string>bank100000000133</string><!-- ББР Банк -->
+		<string>bank100000000003</string><!-- Банк Синара -->
+		<string>bank100000000027</string><!-- Кредит Европа Банк (Россия) -->
+		<string>bank100000000032</string><!-- Ренессанс Банк (Ренессанс Кредит) -->
+		<string>bank100000000184</string><!-- АКБ НРБанк -->
+		<string>bank100000000217</string><!-- АКБ ФОРА-БАНК -->
+		<string>bank100000000121</string><!-- КБ Солидарность -->
+		<string>bank100000000092</string><!-- БыстроБанк -->
+		<string>bank100000000154</string><!-- Банк Аверс -->
+		<string>bank100000000094</string><!-- ЧЕЛЯБИНВЕСТБАНК -->
+		<string>bank100000000106</string><!-- ЧЕЛИНДБАНК -->
+		<string>bank100000000037</string><!-- ГЕНБАНК -->
+		<string>bank100000000007</string><!-- Райффайзен Банк -->
+		<string>bank100000000010</string><!-- Банк ПСБ -->
+		<string>bank100000000273</string><!-- Озон Банк (Ozon) -->
+		<string>bank100000000259</string><!-- ВБ Банк (Вайлдберриз банк) -->
+		<string>bank100000000022</string><!-- НКО ЮМани -->
+		<string>bank100000000289</string><!-- МТС Деньги (ЭКСИ Банк) -->
+		<string>bank110000000288</string><!-- Авито Кошелек (Банк Пэйджин) -->
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

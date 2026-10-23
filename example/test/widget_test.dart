@@ -15,11 +15,8 @@ void main() {
       home: Scaffold(
         body: SbpBanksSheet(
           url: sbpPaymentUrl,
-          banks: SbpBanks(
-            [_bank('bank1', 'Установленный')],
-            [_bank('bank2', 'Другой')],
-            C2bmembersSource.bundled,
-          ),
+          source: C2bmembersSource.bundled,
+          banks: SbpBanks(installed: [_bank('bank1', 'Установленный')], others: [_bank('bank2', 'Другой')]),
         ),
       ),
     ));

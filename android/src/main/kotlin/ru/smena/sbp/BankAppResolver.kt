@@ -1,7 +1,10 @@
 package ru.smena.sbp
 
-/** Банк из c2bmembers.json, который нужно найти на устройстве */
-internal data class BankQuery(val schema: String, val packageName: String?)
+/**
+ * Банк из c2bmembers.json, который нужно найти на устройстве.
+ * [packageNames] - package из json и дополнительные известные пакеты банка (по приоритету).
+ */
+internal data class BankQuery(val schema: String, val packageNames: List<String>)
 
 /** Найденный банк: schema из json и реальный package приложения, которое её обрабатывает */
 internal data class ResolvedBank(val schema: String, val packageName: String)
@@ -10,7 +13,7 @@ internal data class ResolvedBank(val schema: String, val packageName: String)
  * Определяет установленные банки без статического списка пакетов.
  *
  * Источник 1: приложение, которое обрабатывает ссылку `<schema>://qr.nspk.ru/`.
- * Источник 2: приложение с package из json, которое обрабатывает `https://qr.nspk.ru/`.
+ * Источник 2: приложение с одним из пакетов банка, которое обрабатывает `https://qr.nspk.ru/`.
  *
  * [handlersFor] возвращает пакеты activity, которые открывают переданную ссылку
  * (PackageManager.queryIntentActivities). Вынесено в параметр, чтобы логику можно было
@@ -26,10 +29,10 @@ internal class BankAppResolver(private val handlersFor: (String) -> List<String>
                 if (isValidScheme(bank.schema)) handlersFor(schemeUri(bank.schema)) else emptyList()
             val packageName = when {
                 schemeHandlers.isNotEmpty() ->
-                    schemeHandlers.firstOrNull { it == bank.packageName } ?: schemeHandlers.first()
+                    bank.packageNames.firstOrNull { it in schemeHandlers } ?: schemeHandlers.first()
 
-                !bank.packageName.isNullOrBlank() && bank.packageName in httpsHandlers ->
-                    bank.packageName
+                bank.packageNames.isNotEmpty() ->
+                    bank.packageNames.firstOrNull { it in httpsHandlers }
 
                 else -> null
             }

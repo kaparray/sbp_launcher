@@ -73,7 +73,10 @@ class SbpPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private fun getInstalledBanks(call: MethodCall, result: Result) {
         val banks = call.argument<List<Map<String, Any?>>>("banks")?.mapNotNull { bank ->
-            (bank["schema"] as? String)?.let { BankQuery(it, bank["package_name"] as? String) }
+            val schema = bank["schema"] as? String ?: return@mapNotNull null
+            val packageNames = (bank["package_names"] as? List<*>)?.filterIsInstance<String>()
+                ?: listOfNotNull(bank["package_name"] as? String)
+            BankQuery(schema, packageNames.filter { it.isNotBlank() }.distinct())
         }
         if (banks == null) {
             result.error(ERROR_INVALID_ARGUMENT, "Argument 'banks' is required", null)

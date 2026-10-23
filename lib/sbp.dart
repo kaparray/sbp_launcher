@@ -3,10 +3,53 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:sbp/data/c2bmembers_repository.dart';
+import 'package:sbp/data/sbp_bank_lists.dart';
 import 'package:sbp/models/c2bmembers_model.dart';
 
 export 'package:sbp/data/c2bmembers_repository.dart';
+export 'package:sbp/data/sbp_bank_lists.dart';
 export 'package:sbp/models/c2bmembers_model.dart';
+
+/// Сколько записей LSApplicationQueriesSchemes учитывает iOS (приложения с iOS 15+ SDK)
+const sbpIosQueriesSchemesLimit = 50;
+
+/// Как определять установленные банки на Android
+enum SbpAndroidDetection {
+  /// Банк установлен, если есть приложение, которое открывает `<schema>://qr.nspk.ru/`
+  /// (intent-запросы из манифеста плагина). Лимита на число банков нет.
+  intentQueries,
+
+  /// Не определять: [Sbp.getInstalledBanks] вернёт пустой список,
+  /// все банки показываются списком и открываются через [Sbp.launchBank].
+  disabled,
+}
+
+/// Как определять установленные банки на iOS.
+///
+/// ⚠️ iOS определяет не больше 50 банков: `canOpenURL` честно отвечает только для схем
+/// из `LSApplicationQueriesSchemes` в Info.plist, а учитываются первые 50 записей.
+/// Банки вне списка всё равно открываются через [Sbp.launchBank].
+/// Рекомендуемый список схем - [sbpIosPriorityBankSchemes].
+enum SbpIosDetection {
+  /// `canOpenURL` по схемам из `LSApplicationQueriesSchemes`.
+  /// ⚠️ Определяются не больше 50 банков - тех, чьи схемы есть в Info.plist.
+  queriesSchemesMax50,
+
+  /// Не определять: [Sbp.getInstalledBanks] вернёт пустой список,
+  /// все банки показываются списком и открываются через [Sbp.launchBank].
+  disabled,
+}
+
+/// Банки для экрана выбора: установленные и остальные («другие банки»)
+class SbpBanks {
+  /// найденные на устройстве - показывать сверху
+  final List<C2bmemberModel> installed;
+
+  /// остальные банки из списка - их тоже можно открыть через [Sbp.launchBank]
+  final List<C2bmemberModel> others;
+
+  const SbpBanks({required this.installed, required this.others});
+}
 
 /// Результат открытия банка
 enum SbpOpenResult {
@@ -45,26 +88,43 @@ class Sbp {
   /// Получение списка банков, установленных на устройстве пользователя: IOS/Android
   /// передаем модель json, который приходит с https://qr.nspk.ru/proxyapp/c2bmembers.json (C2bmembersModel)
   ///
-  /// Android: банк установлен, если есть приложение, которое открывает ссылку `<schema>://qr.nspk.ru`.
-  /// iOS: определяются только банки, чьи схемы есть в LSApplicationQueriesSchemes (не больше 50).
+  /// [android] - способ определения на Android, по умолчанию [SbpAndroidDetection.intentQueries].
+  /// [ios] - способ определения на iOS, по умолчанию [SbpIosDetection.queriesSchemesMax50]:
+  /// ⚠️ на iOS определяются не больше 50 банков (схемы из LSApplicationQueriesSchemes).
+  /// [extraAndroidPackageNames] - дополнительные пакеты банков по schema, которых нет в json.
+  ///
   /// Банки, которых нет в результате, всё равно можно открыть через [launchBank].
   static Future<List<C2bmemberModel>> getInstalledBanks(
     C2bmembersModel c2bmembersModel, {
     bool useAndroidLocalIcons = false,
     bool useAndroidLocalNames = false,
+    SbpAndroidDetection android = SbpAndroidDetection.intentQueries,
+    SbpIosDetection ios = SbpIosDetection.queriesSchemesMax50,
+    Map<String, List<String>> extraAndroidPackageNames = sbpExtraAndroidPackageNames,
   }) async {
     final banks = c2bmembersModel.c2bmembersModel;
     if (_isIOS) {
+      if (ios == SbpIosDetection.disabled) return [];
       final installed = await _channel.invokeListMethod<String>('getInstalledBanks', {
         'schema_applications': banks.map((bank) => bank.schema).toList(),
       });
+      if (kDebugMode) await _warnAboutIosLimit(banks);
       final schemas = (installed ?? const <String>[]).toSet();
       return banks.where((bank) => schemas.contains(bank.schema)).toList();
     }
     if (_isAndroid) {
+      if (android == SbpAndroidDetection.disabled) return [];
       final installed = await _channel.invokeListMethod<Map<dynamic, dynamic>>('getInstalledBanks', {
         'banks': [
-          for (final bank in banks) {'schema': bank.schema, 'package_name': bank.packageName},
+          for (final bank in banks)
+            {
+              'schema': bank.schema,
+              'package_name': bank.packageName,
+              'package_names': {
+                if (bank.packageName.isNotEmpty) bank.packageName,
+                ...?extraAndroidPackageNames[bank.schema],
+              }.toList(),
+            },
         ],
         'use_android_local_icons': useAndroidLocalIcons,
         'use_android_local_names': useAndroidLocalNames,
@@ -83,6 +143,58 @@ class Sbp {
       return result;
     }
     throw UnsupportedError('sbp: getInstalledBanks is supported only on Android and iOS');
+  }
+
+  /// Банки для экрана выбора: установленные (сверху) и все остальные («другие банки»).
+  /// Параметры - как у [getInstalledBanks]. ⚠️ На iOS установленными определяются не больше 50 банков.
+  static Future<SbpBanks> getBanks(
+    C2bmembersModel c2bmembersModel, {
+    bool useAndroidLocalIcons = false,
+    bool useAndroidLocalNames = false,
+    SbpAndroidDetection android = SbpAndroidDetection.intentQueries,
+    SbpIosDetection ios = SbpIosDetection.queriesSchemesMax50,
+    Map<String, List<String>> extraAndroidPackageNames = sbpExtraAndroidPackageNames,
+  }) async {
+    final installed = await getInstalledBanks(
+      c2bmembersModel,
+      useAndroidLocalIcons: useAndroidLocalIcons,
+      useAndroidLocalNames: useAndroidLocalNames,
+      android: android,
+      ios: ios,
+      extraAndroidPackageNames: extraAndroidPackageNames,
+    );
+    final installedSchemas = installed.map((bank) => bank.schema).toSet();
+    return SbpBanks(
+      installed: installed,
+      others: c2bmembersModel.c2bmembersModel.where((bank) => !installedSchemas.contains(bank.schema)).toList(),
+    );
+  }
+
+  static bool _iosLimitWarned = false;
+
+  @visibleForTesting
+  static void debugResetIosLimitWarning() => _iosLimitWarned = false;
+
+  /// В debug один раз подсказывает, сколько банков iOS не сможет определить
+  static Future<void> _warnAboutIosLimit(List<C2bmemberModel> banks) async {
+    if (_iosLimitWarned) return;
+    _iosLimitWarned = true;
+    try {
+      final schemes = await _channel.invokeListMethod<String>('getQueriesSchemes') ?? const [];
+      final counted = schemes.take(sbpIosQueriesSchemesLimit).toSet();
+      final undetectable = banks.where((bank) => !counted.contains(bank.schema)).length;
+      if (schemes.length > sbpIosQueriesSchemesLimit) {
+        debugPrint('sbp: LSApplicationQueriesSchemes has ${schemes.length} entries, iOS uses only the first '
+            '$sbpIosQueriesSchemesLimit. See sbpIosPriorityBankSchemes.');
+      }
+      if (undetectable > 0) {
+        debugPrint('sbp: $undetectable of ${banks.length} banks cannot be detected on iOS (not in the first '
+            '$sbpIosQueriesSchemesLimit LSApplicationQueriesSchemes). Show them as "other banks" and open with '
+            'Sbp.launchBank.');
+      }
+    } on PlatformException catch (_) {
+      // старая нативная часть без getQueriesSchemes - подсказка не обязательна
+    } on MissingPluginException catch (_) {}
   }
 
   /// Открываем банк: Android/IOS.

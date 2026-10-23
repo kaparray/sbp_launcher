@@ -18,13 +18,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// Банки для шторки: установленные сверху, остальные - «другие банки»
-class SbpBanks {
-  final List<C2bmemberModel> installed;
-  final List<C2bmemberModel> others;
+/// Банки для шторки и источник списка
+class LoadedBanks {
+  final SbpBanks banks;
   final C2bmembersSource source;
 
-  const SbpBanks(this.installed, this.others, this.source);
+  const LoadedBanks(this.banks, this.source);
 }
 
 class PaymentScreen extends StatefulWidget {
@@ -37,15 +36,20 @@ class PaymentScreen extends StatefulWidget {
 class _PaymentScreenState extends State<PaymentScreen> {
   /// В продакшене укажите url своего прокси для c2bmembers.json
   final _repository = C2bmembersRepository();
-  late final Future<SbpBanks> _banks = _loadBanks();
 
-  Future<SbpBanks> _loadBanks() async {
+  /// Настройка разработчика: определять ли установленные банки.
+  /// Выключено - все банки показываются одним списком и открываются через launchBank.
+  bool _detectInstalled = true;
+
+  Future<LoadedBanks> _loadBanks() async {
     final loaded = await _repository.load();
-    final all = loaded.model.c2bmembersModel;
-    final installed = await Sbp.getInstalledBanks(loaded.model);
-    final installedSchemas = installed.map((bank) => bank.schema).toSet();
-    final others = all.where((bank) => !installedSchemas.contains(bank.schema)).toList();
-    return SbpBanks(installed, others, loaded.source);
+    final banks = await Sbp.getBanks(
+      loaded.model,
+      android: _detectInstalled ? SbpAndroidDetection.intentQueries : SbpAndroidDetection.disabled,
+      // ⚠️ на iOS определяются только банки из первых 50 схем LSApplicationQueriesSchemes
+      ios: _detectInstalled ? SbpIosDetection.queriesSchemesMax50 : SbpIosDetection.disabled,
+    );
+    return LoadedBanks(banks, loaded.source);
   }
 
   @override
@@ -53,24 +57,35 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('СБП')),
       body: Center(
-        child: FilledButton(
-          onPressed: () => showModalBottomSheet<void>(
-            context: context,
-            isScrollControlled: true,
-            useSafeArea: true,
-            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-            builder: (_) => FutureBuilder<SbpBanks>(
-              future: _banks,
-              builder: (context, snapshot) {
-                final banks = snapshot.data;
-                if (banks == null) {
-                  return const SizedBox(height: 300, child: Center(child: CircularProgressIndicator()));
-                }
-                return SbpBanksSheet(banks: banks, url: sbpPaymentUrl);
-              },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SwitchListTile(
+              title: const Text('Определять установленные банки'),
+              value: _detectInstalled,
+              onChanged: (value) => setState(() => _detectInstalled = value),
             ),
-          ),
-          child: const Text('Оплатить через СБП'),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                isScrollControlled: true,
+                useSafeArea: true,
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                builder: (_) => FutureBuilder<LoadedBanks>(
+                  future: _loadBanks(),
+                  builder: (context, snapshot) {
+                    final loaded = snapshot.data;
+                    if (loaded == null) {
+                      return const SizedBox(height: 300, child: Center(child: CircularProgressIndicator()));
+                    }
+                    return SbpBanksSheet(banks: loaded.banks, source: loaded.source, url: sbpPaymentUrl);
+                  },
+                ),
+              ),
+              child: const Text('Оплатить через СБП'),
+            ),
+          ],
         ),
       ),
     );
@@ -79,9 +94,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
 class SbpBanksSheet extends StatefulWidget {
   final SbpBanks banks;
+  final C2bmembersSource source;
   final String url;
 
-  const SbpBanksSheet({super.key, required this.banks, required this.url});
+  const SbpBanksSheet({super.key, required this.banks, required this.source, required this.url});
 
   @override
   State<SbpBanksSheet> createState() => _SbpBanksSheetState();
@@ -114,7 +130,7 @@ class _SbpBanksSheetState extends State<SbpBanksSheet> {
       builder: (context, controller) => CustomScrollView(
         controller: controller,
         slivers: [
-          SliverToBoxAdapter(child: _Header(source: banks.source)),
+          SliverToBoxAdapter(child: _Header(source: widget.source)),
           if (_message != null)
             SliverToBoxAdapter(
               child: Padding(
@@ -126,7 +142,7 @@ class _SbpBanksSheetState extends State<SbpBanksSheet> {
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Text('Не нашли установленных банков. Выберите свой банк из списка ниже.'),
+                child: Text('Выберите свой банк из списка ниже.'),
               ),
             )
           else

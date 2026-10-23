@@ -27,6 +27,9 @@ public class SwiftSbpPlugin: NSObject, FlutterPlugin {
         return
       }
       open(url, result: result)
+    case "getQueriesSchemes":
+      // для предупреждений в debug: что реально лежит в LSApplicationQueriesSchemes
+      result(Bundle.main.object(forInfoDictionaryKey: "LSApplicationQueriesSchemes") as? [String] ?? [])
     default:
       result(FlutterMethodNotImplemented)
     }
