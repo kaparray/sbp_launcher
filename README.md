@@ -22,14 +22,11 @@ import 'package:sbp/sbp.dart';
 // 1. Список банков: сервер → кэш на устройстве (24 ч) → встроенный снимок
 final repository = C2bmembersRepository(url: 'https://your-proxy.example.com/c2bmembers.json');
 final loaded = await repository.load();
-final allBanks = loaded.model.c2bmembersModel;
 
-// 2. Установленные банки — показываем сверху шторки
-final installed = await Sbp.getInstalledBanks(loaded.model);
-
-// 3. Остальные банки — блок «Другие банки». Их тоже можно открыть
-final installedSchemas = installed.map((b) => b.schema).toSet();
-final others = allBanks.where((b) => !installedSchemas.contains(b.schema)).toList();
+// 2. Установленные банки (сверху шторки) и остальные — блок «Другие банки», их тоже можно открыть
+final banks = await Sbp.getBanks(loaded.model);
+banks.installed; // ⚠️ на iOS — не больше 50 банков, см. «iOS: лимит 50 схем»
+banks.others;
 
 // 4. Открываем банк и честно узнаём результат
 final result = await Sbp.launchBank('https://qr.nspk.ru/AS1000...', bank);
@@ -60,6 +57,31 @@ switch (result) {
 релиза приложения.
 
 Обновить встроенный снимок: `dart run tool/update_c2bmembers.dart` (или `--file=path.json`).
+
+### Определение установленных банков: настройка разработчика
+
+Определение можно выключить отдельно для каждой платформы. Тогда `getInstalledBanks` вернёт пустой список,
+`getBanks` положит все банки в `others`, а пользователь выберет банк из полного списка
+(`launchBank` откроет любой).
+
+```dart
+final banks = await Sbp.getBanks(
+  model,
+  android: SbpAndroidDetection.intentQueries, // или SbpAndroidDetection.disabled
+  ios: SbpIosDetection.queriesSchemesMax50,   // или SbpIosDetection.disabled
+);
+```
+
+Значение по умолчанию для iOS специально называется `queriesSchemesMax50`: ограничение видно прямо в
+сигнатуре метода и в подсказках IDE. В debug-сборке на iOS плагин один раз пишет в лог, если в
+`LSApplicationQueriesSchemes` больше 50 записей и сколько банков из списка нельзя определить.
+
+Когда выключать определение:
+* вы показываете свой короткий список банков (например, по истории оплат пользователя);
+* на iOS ваша аудитория пользуется банками, которые не помещаются в 50 схем, и вы не хотите делить список
+  на «установленные» и «другие»;
+* нужно убрать из манифеста `<queries>` плагина (`tools:node="remove"`): без них определение на Android 11+
+  не работает, а открытие через `launchBank` работает.
 
 ### Android
 
@@ -92,33 +114,64 @@ switch (result) {
 
 Если вы раньше добавляли в свой `AndroidManifest.xml` `<package>`-записи банков, их можно удалить.
 
-Требования: `minSdk 21`, Java 17.
+**Дополнительные пакеты.** Если у банка появилось новое приложение, которого ещё нет в `c2bmembers.json`,
+его пакет можно добавить по `schema` банка. Встроенный список — `sbpExtraAndroidPackageNames`
+(сейчас там новое приложение РСХБ `ru.rshb.ownfinance`). Свой список передаётся параметром:
 
-### iOS
-
-`canOpenURL` честно отвечает только для схем из `LSApplicationQueriesSchemes` в `Info.plist`,
-а с iOS 15 там учитываются **не больше 50 записей** — остальные схемы молча считаются неустановленными
-([документация Apple](https://developer.apple.com/documentation/uikit/uiapplication/1622952-canopenurl)).
-
-Стратегия:
-
-1. Добавьте в `Info.plist` до 50 схем приоритетных банков (для вашей аудитории). Они определяются как
-   установленные и показываются сверху.
-2. Все остальные банки из json показывайте блоком «Другие банки». `launchBank` откроет их напрямую:
-   `UIApplication.open` не требует `LSApplicationQueriesSchemes`, а плагин возвращает реальный результат
-   из `completionHandler` — `opened` или `notInstalled`.
-
-```xml
-<key>LSApplicationQueriesSchemes</key>
-<array>
-  <string>bank100000000111</string> <!-- Сбербанк -->
-  <string>bank100000000004</string> <!-- Т-Банк -->
-  <string>bank110000000005</string> <!-- ВТБ -->
-  <!-- ... не больше 50 -->
-</array>
+```dart
+await Sbp.getBanks(model, extraAndroidPackageNames: {
+  ...sbpExtraAndroidPackageNames,
+  'bank100000000020': ['ru.rshb.ownfinance'],
+});
 ```
 
-Готовый список 50 первых банков реестра — в [example/ios/Runner/Info.plist](example/ios/Runner/Info.plist).
+Банк с таким приложением определяется, даже если приложение не объявляет схему банка, но открывает
+`https://qr.nspk.ru`. То, что `ru.rshb.ownfinance` открывает ссылки СБП, на реальном устройстве пока не
+проверено.
+
+Требования: `minSdk 21`, Java 17.
+
+### iOS: лимит 50 схем
+
+> ⚠️ **На iOS установленными определяются не больше 50 банков.** Это ограничение iOS, обойти его нельзя.
+
+`canOpenURL` честно отвечает только для схем из `LSApplicationQueriesSchemes` в `Info.plist`. В приложениях,
+собранных с iOS 15+ SDK (то есть во всех актуальных сборках), учитываются **только первые 50 записей**: для
+остальных схем `canOpenURL` всегда возвращает `false`
+([документация Apple](https://developer.apple.com/documentation/uikit/uiapplication/1622952-canopenurl)).
+`Info.plist` зашивается при сборке, поменять список на лету нельзя, а API со списком установленных
+приложений в iOS нет.
+
+Что это значит для оплаты:
+
+| | Банк в первых 50 схемах | Банк вне списка |
+| --- | --- | --- |
+| Определяется как установленный | да | нет, попадает в «Другие банки» |
+| Открывается через `launchBank` | да | да — `UIApplication.open` не требует `LSApplicationQueriesSchemes` |
+| Результат открытия | реальный `opened` / `notInstalled` | реальный `opened` / `notInstalled` |
+
+То есть пользователь банка вне списка не увидит его в верхнем блоке, но найдёт в «Других банках» и
+заплатит.
+
+**Какие 50 схем добавлять.** В плагине есть рекомендуемый список `sbpIosPriorityBankSchemes`:
+
+1. крупнейшие банки по вкладам физлиц (Brobank, данные на 01.08.2025) — прокси размера розничной базы;
+2. крупные банки, которые не раскрывают отчётность и поэтому выпали из рейтингов (Райффайзен, ПСБ);
+3. кошельки экосистем и маркетплейсов, через которые много платят (Озон Банк, ВБ Банк, ЮMoney, МТС Деньги,
+   Авито Кошелек);
+4. только банки из реестра `c2bmembers.json`.
+
+Сгенерировать блок для `Info.plist`:
+
+```bash
+dart run tool/ios_queries_schemes.dart
+```
+
+Пример — [example/ios/Runner/Info.plist](example/ios/Runner/Info.plist).
+
+**Лучше — свой список.** Обычно 10–15 банков закрывают почти все оплаты. Логируйте, каким банком
+пользователь заплатил (`launchBank` вернул `opened`), и раз в несколько релизов пересобирайте
+50 схем по этой статистике. Порядок схем не важен, но больше 50 записей добавлять бессмысленно.
 
 Требования: iOS 12.0+.
 
@@ -146,7 +199,8 @@ flutter:
 | `Sbp.openBank(url, bank) -> bool` | `Sbp.launchBank(url, bank) -> SbpOpenResult` (`openBank` работает, помечен `@Deprecated`) |
 | `C2bmembersModel.fromJson(c2bmembersData)` | `C2bmembersRepository().load()` / `Sbp.loadBanks()` |
 | `<queries>` с `<package>` банков в приложении | не нужен |
-| 1000 схем в `Info.plist` | до 50 приоритетных схем + «другие банки» |
+| 1000 схем в `Info.plist` | до 50 схем (`sbpIosPriorityBankSchemes`) + «другие банки» |
+| — | `Sbp.getBanks`, настройки `android:` / `ios:` |
 | `getInstalledBanks`, `openAndroidBank`, `openBankIOS` | без изменений сигнатур |
 
 На iOS `openBankIOS` теперь возвращает `false`, если ссылка не открылась (раньше — всегда `true`).
@@ -161,8 +215,7 @@ flutter:
 import 'package:sbp/sbp.dart';
 
 final loaded = await C2bmembersRepository(url: 'https://your-proxy.example.com/c2bmembers.json').load();
-final installed = await Sbp.getInstalledBanks(loaded.model);   // show these first
-// show the rest of loaded.model.c2bmembersModel as "other banks" — they can be opened too
+final banks = await Sbp.getBanks(loaded.model); // banks.installed first, banks.others below — both can be opened
 final result = await Sbp.launchBank('https://qr.nspk.ru/AS1000...', bank); // opened / notInstalled / error
 ```
 
@@ -187,12 +240,25 @@ banks without `package_name` are detected, and the real package is returned in `
 `launchBank` tries the bank package first and retries without it; `notInstalled` is returned when nothing
 can open the link. Requires `minSdk 21` and Java 17.
 
+### Detection settings
+
+Detection can be turned off per platform: `Sbp.getBanks(model, android: SbpAndroidDetection.disabled,
+ios: SbpIosDetection.disabled)` puts every bank into `others`. The iOS default is named
+`SbpIosDetection.queriesSchemesMax50` so the limit is visible in the signature and in IDE hints; in debug
+builds the plugin logs once when `LSApplicationQueriesSchemes` has more than 50 entries.
+Extra Android packages per bank schema: `extraAndroidPackageNames` (defaults to `sbpExtraAndroidPackageNames`,
+which includes the new RSHB app `ru.rshb.ownfinance`).
+
 ### iOS
+
+> ⚠️ At most 50 banks can be detected as installed on iOS — this is an OS limit.
 
 `canOpenURL` only works for schemes in `LSApplicationQueriesSchemes`, and since iOS 15 only the first
 **50** entries count. Put up to 50 priority bank schemes there; list all other banks as "other banks" and
 open them with `launchBank` — `UIApplication.open` does not need the allow-list, and the plugin returns the
-real result from its completion handler. Requires iOS 12.0+.
+real result from its completion handler. A recommended list is `sbpIosPriorityBankSchemes`
+(`dart run tool/ios_queries_schemes.dart` prints the plist block); a list built from your own payment
+analytics is better. Requires iOS 12.0+.
 
 ### Migration from 0.1.x
 
