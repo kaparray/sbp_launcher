@@ -1,0 +1,8 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - lib/data/c2bmembers_data.dart
+
+formatter:
+  page_width: 120

@@ -6,6 +6,7 @@ class C2bmemberModelAndroidLocalData {
 
   /// [bitmap] - иконка приложения, если выставить use_android_local_icons = true
   late final Uint8List? bitmap;
+
   /// [packageName] - package_name приложения
   late final String? packageName;
 
