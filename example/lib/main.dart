@@ -77,27 +77,36 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 }
 
-class SbpBanksSheet extends StatelessWidget {
+class SbpBanksSheet extends StatefulWidget {
   final SbpBanks banks;
   final String url;
 
   const SbpBanksSheet({super.key, required this.banks, required this.url});
 
-  Future<void> _open(BuildContext context, C2bmemberModel bank) async {
-    final messenger = ScaffoldMessenger.of(context);
-    final result = await Sbp.launchBank(url, bank);
-    switch (result) {
-      case SbpOpenResult.opened:
-        break;
-      case SbpOpenResult.notInstalled:
-        messenger.showSnackBar(SnackBar(content: Text('Приложение «${bank.bankName}» не установлено')));
-      case SbpOpenResult.error:
-        messenger.showSnackBar(SnackBar(content: Text('Не удалось открыть «${bank.bankName}»')));
-    }
+  @override
+  State<SbpBanksSheet> createState() => _SbpBanksSheetState();
+}
+
+class _SbpBanksSheetState extends State<SbpBanksSheet> {
+  /// сообщение показываем в шторке: SnackBar экрана оказался бы под ней
+  String? _message;
+
+  Future<void> _open(C2bmemberModel bank) async {
+    setState(() => _message = null);
+    final result = await Sbp.launchBank(widget.url, bank);
+    if (!mounted) return;
+    setState(() {
+      _message = switch (result) {
+        SbpOpenResult.opened => null,
+        SbpOpenResult.notInstalled => 'Приложение «${bank.bankName}» не установлено. Выберите другой банк.',
+        SbpOpenResult.error => 'Не удалось открыть «${bank.bankName}».',
+      };
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final banks = widget.banks;
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: 0.7,
@@ -106,6 +115,13 @@ class SbpBanksSheet extends StatelessWidget {
         controller: controller,
         slivers: [
           SliverToBoxAdapter(child: _Header(source: banks.source)),
+          if (_message != null)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                child: Text(_message!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              ),
+            ),
           if (banks.installed.isEmpty)
             const SliverToBoxAdapter(
               child: Padding(
@@ -114,7 +130,7 @@ class SbpBanksSheet extends StatelessWidget {
               ),
             )
           else
-            _BankList(banks.installed, onTap: (bank) => _open(context, bank)),
+            _BankList(banks.installed, onTap: _open),
           if (banks.others.isNotEmpty) ...[
             const SliverToBoxAdapter(
               child: Padding(
@@ -122,7 +138,7 @@ class SbpBanksSheet extends StatelessWidget {
                 child: Text('Другие банки', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
-            _BankList(banks.others, onTap: (bank) => _open(context, bank)),
+            _BankList(banks.others, onTap: _open),
           ],
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
         ],

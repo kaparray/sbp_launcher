@@ -3,8 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sbp/sbp.dart';
 import 'package:sbp_example/main.dart';
 
-C2bmemberModel _bank(String schema, String name) =>
-    C2bmembersModel.fromJson({
+C2bmemberModel _bank(String schema, String name) => C2bmembersModel.fromJson({
       'dictionary': [
         {'schema': schema, 'bankName': name},
       ],

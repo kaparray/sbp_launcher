@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "ru.smena.sbp_example"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973" // path_provider_android requires NDK 27
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
