@@ -34,6 +34,18 @@ Future<void> main(List<String> args) async {
       if (bank['icon'] != null) bank['schema']: bank['icon'],
   };
 
+  final iconsByPackage = <Object?, Object?>{};
+  for (final bank in (c2bmembersData['dictionary'] as List).cast<Map<String, Object?>>()) {
+    if (bank['icon'] != null && bank['package_name'] != null) {
+      iconsByPackage.putIfAbsent(bank['package_name'], () => bank['icon']);
+    }
+  }
+
+  final packageCount = <Object?, int>{};
+  for (final bank in dictionary) {
+    packageCount.update(bank['package_name'], (count) => count + 1, ifAbsent: () => 1);
+  }
+
   final banks = <Map<String, Object>>[];
   for (final bank in dictionary) {
     final schema = bank['schema'];
@@ -46,7 +58,10 @@ Future<void> main(List<String> args) async {
     for (final field in _boolFields) {
       if (bank[field] is bool) entry[field] = bank[field] as bool;
     }
-    final icon = icons[schema];
+    // банк может сменить schema (ВТБ: bank100000000005 -> bank110000000005), тогда ищем иконку по пакету.
+    // White-label пакеты (один пакет на несколько банков) пропускаем, иначе банки получат чужую иконку.
+    final packageName = bank['package_name'];
+    final icon = icons[schema] ?? (packageCount[packageName] == 1 ? iconsByPackage[packageName] : null);
     if (icon != null) entry['icon'] = icon;
     banks.add(entry);
   }

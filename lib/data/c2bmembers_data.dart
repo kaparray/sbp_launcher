@@ -29,7 +29,8 @@ final Map<String, dynamic> c2bmembersData = {
       "logoURL": "https://qr.nspk.ru/proxyapp/logo/bank100000000005.png",
       "schema": "bank110000000005",
       "package_name": "ru.vtb24.mobilebanking.android",
-      "webClientUrl": "https://online.vneshtbank.ru/i/paymentSbp"
+      "webClientUrl": "https://online.vneshtbank.ru/i/paymentSbp",
+      "icon": "packages/sbp/assets/icons/vtb.png"
     },
     {
       "bankName": "АЛЬФА-БАНК",
