@@ -1,82 +1,140 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:sbp/data/c2bmembers_data.dart';
-import 'package:sbp/models/c2bmembers_model.dart';
 import 'package:sbp/sbp.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  final url =
-      'https://qr.nspk.ru/AS10003P3RH0LJ2A9ROO038L6NT5RU1M?type=01&bank=000000000001&sum=10000&cur=RUB&crc=F3D0';
+/// Ссылка на оплату, которую обычно отдаёт бэкенд
+const sbpPaymentUrl =
+    'https://qr.nspk.ru/AS10003P3RH0LJ2A9ROO038L6NT5RU1M?type=01&bank=000000000001&sum=10000&cur=RUB&crc=F3D0';
 
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: PaymentScreen());
+  }
 }
 
-class _MyAppState extends State<MyApp> {
+/// Банки для шторки: установленные сверху, остальные - «другие банки»
+class SbpBanks {
+  final List<C2bmemberModel> installed;
+  final List<C2bmemberModel> others;
+  final C2bmembersSource source;
+
+  const SbpBanks(this.installed, this.others, this.source);
+}
+
+class PaymentScreen extends StatefulWidget {
+  const PaymentScreen({super.key});
+
   @override
-  void initState() {
-    super.initState();
-    getInstalledBanks();
-  }
+  State<PaymentScreen> createState() => _PaymentScreenState();
+}
 
-  List<C2bmemberModel> informations = [];
+class _PaymentScreenState extends State<PaymentScreen> {
+  /// В продакшене укажите url своего прокси для c2bmembers.json
+  final _repository = C2bmembersRepository();
+  late final Future<SbpBanks> _banks = _loadBanks();
 
-  /// Получаем установленные банки
-  Future<void> getInstalledBanks() async {
-    try {
-      informations.addAll(await Sbp.getInstalledBanks(
-        C2bmembersModel.fromJson(c2bmembersData),
-        useAndroidLocalIcons: false,
-        useAndroidLocalNames: false,
-      ));
-    } on Exception catch (e) {
-      throw Exception(e);
-    }
-    setState(() {});
+  Future<SbpBanks> _loadBanks() async {
+    final loaded = await _repository.load();
+    final all = loaded.model.c2bmembersModel;
+    final installed = await Sbp.getInstalledBanks(loaded.model);
+    final installedSchemas = installed.map((bank) => bank.schema).toSet();
+    final others = all.where((bank) => !installedSchemas.contains(bank.schema)).toList();
+    return SbpBanks(installed, others, loaded.source);
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('СБП'),
-        ),
-        body: Center(
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            decoration:
-                const BoxDecoration(color: Colors.tealAccent, borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: Builder(builder: (context) {
-              return GestureDetector(
-                onTap: () => showModalBottomSheet(
-                  context: context,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20),
-                    ),
-                  ),
-                  builder: (ctx) => SbpModalBottomSheetWidget(informations, widget.url),
-                ),
-                child: const Text('Открыть модальное окно'),
-              );
-            }),
+    return Scaffold(
+      appBar: AppBar(title: const Text('СБП')),
+      body: Center(
+        child: FilledButton(
+          onPressed: () => showModalBottomSheet<void>(
+            context: context,
+            isScrollControlled: true,
+            useSafeArea: true,
+            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+            builder: (_) => FutureBuilder<SbpBanks>(
+              future: _banks,
+              builder: (context, snapshot) {
+                final banks = snapshot.data;
+                if (banks == null) {
+                  return const SizedBox(height: 300, child: Center(child: CircularProgressIndicator()));
+                }
+                return SbpBanksSheet(banks: banks, url: sbpPaymentUrl);
+              },
+            ),
           ),
+          child: const Text('Оплатить через СБП'),
         ),
       ),
     );
   }
 }
 
-class SbpHeaderModalSheet extends StatelessWidget {
-  const SbpHeaderModalSheet({Key? key}) : super(key: key);
+class SbpBanksSheet extends StatelessWidget {
+  final SbpBanks banks;
+  final String url;
+
+  const SbpBanksSheet({super.key, required this.banks, required this.url});
+
+  Future<void> _open(BuildContext context, C2bmemberModel bank) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final result = await Sbp.launchBank(url, bank);
+    switch (result) {
+      case SbpOpenResult.opened:
+        break;
+      case SbpOpenResult.notInstalled:
+        messenger.showSnackBar(SnackBar(content: Text('Приложение «${bank.bankName}» не установлено')));
+      case SbpOpenResult.error:
+        messenger.showSnackBar(SnackBar(content: Text('Не удалось открыть «${bank.bankName}»')));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.7,
+      maxChildSize: 0.95,
+      builder: (context, controller) => CustomScrollView(
+        controller: controller,
+        slivers: [
+          SliverToBoxAdapter(child: _Header(source: banks.source)),
+          if (banks.installed.isEmpty)
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text('Не нашли установленных банков. Выберите свой банк из списка ниже.'),
+              ),
+            )
+          else
+            _BankList(banks.installed, onTap: (bank) => _open(context, bank)),
+          if (banks.others.isNotEmpty) ...[
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20, 24, 20, 8),
+                child: Text('Другие банки', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
+            _BankList(banks.others, onTap: (bank) => _open(context, bank)),
+          ],
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
+        ],
+      ),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  final C2bmembersSource source;
+
+  const _Header({required this.source});
 
   @override
   Widget build(BuildContext context) {
@@ -86,127 +144,55 @@ class SbpHeaderModalSheet extends StatelessWidget {
         Container(
           height: 5,
           width: 50,
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
-              color: Colors.grey),
+          decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: Colors.grey),
         ),
         const SizedBox(height: 20),
-        Image.asset(
-          'packages/sbp/assets/sbp.png',
-          width: 100,
-        ),
+        Image.asset('packages/sbp/assets/sbp.png', width: 100),
         const SizedBox(height: 10),
         const Text('Выберите банк для оплаты по СБП'),
-        const SizedBox(height: 20),
+        Text('Список банков: ${source.name}', style: Theme.of(context).textTheme.bodySmall),
+        const SizedBox(height: 12),
       ],
     );
   }
 }
 
-class SbpModalBottomSheetEmptyListBankWidget extends StatelessWidget {
-  const SbpModalBottomSheetEmptyListBankWidget({Key? key}) : super(key: key);
+class _BankList extends StatelessWidget {
+  final List<C2bmemberModel> banks;
+  final ValueChanged<C2bmemberModel> onTap;
+
+  const _BankList(this.banks, {required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const SbpHeaderModalSheet(),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Container(
-              height: 80,
-              decoration: const BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-              ),
-              child: const Center(
-                child: Text('У вас нет банков для оплаты по СБП'),
-              ),
-            ),
+    return SliverList.builder(
+      itemCount: banks.length,
+      itemBuilder: (context, index) {
+        final bank = banks[index];
+        return ListTile(
+          leading: SizedBox.square(
+            dimension: 40,
+            child: ClipRRect(borderRadius: BorderRadius.circular(10), child: _BankIcon(bank)),
           ),
-        ),
-        const SizedBox(height: 50),
-      ],
+          title: Text(bank.localName ?? bank.bankName),
+          onTap: () => onTap(bank),
+        );
+      },
     );
   }
 }
 
-/// Модальное окно с банками
-class SbpModalBottomSheetWidget extends StatelessWidget {
-  final List<C2bmemberModel> informations;
-  final String url;
+class _BankIcon extends StatelessWidget {
+  final C2bmemberModel bank;
 
-  const SbpModalBottomSheetWidget(this.informations, this.url, {Key? key}) : super(key: key);
+  const _BankIcon(this.bank);
 
   @override
   Widget build(BuildContext context) {
-    /// если есть информация о банках, то отображаем их
-    if (informations.isNotEmpty) {
-      return Column(
-        children: [
-          const SbpHeaderModalSheet(),
-          Expanded(
-            child: ListView.separated(
-              itemCount: informations.length,
-              itemBuilder: (ctx, index) {
-                final information = informations[index];
-                return Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white70,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(20),
-                    ),
-                  ),
-                  child: GestureDetector(
-                    onTap: () => openBank(url, information),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        SizedBox(
-                          width: 80.0,
-                          height: 80.0,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: information.bitmap != null
-                                ? Image.memory(
-                                    information.bitmap!,
-                                  )
-                                : information.icon.isNotEmpty
-                                    ? Image.asset(
-                                        information.icon,
-                                      )
-                                    : Image.network(
-                                        information.logoURL,
-                                      ),
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Center(
-                          child: Text(information.bankName),
-                        ),
-                        const SizedBox(width: 10)
-                      ],
-                    ),
-                  ),
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 10),
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
-      );
-    } else {
-      return const SbpModalBottomSheetEmptyListBankWidget();
-    }
+    const fallback = Icon(Icons.account_balance);
+    if (bank.bitmap != null) return Image.memory(bank.bitmap!);
+    if (bank.icon.isNotEmpty) return Image.asset(bank.icon, errorBuilder: (_, __, ___) => fallback);
+    if (bank.logoURL.isNotEmpty) return Image.network(bank.logoURL, errorBuilder: (_, __, ___) => fallback);
+    return fallback;
   }
-
-  /// передается scheme
-  FutureOr<void> openBank(String url, C2bmemberModel c2bmemberModel) async => await Sbp.openBank(url, c2bmemberModel);
 }

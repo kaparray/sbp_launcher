@@ -1,27 +1,34 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:sbp/sbp.dart';
 import 'package:sbp_example/main.dart';
 
-void main() {
-  testWidgets('Verify Platform version', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+C2bmemberModel _bank(String schema, String name) =>
+    C2bmembersModel.fromJson({
+      'dictionary': [
+        {'schema': schema, 'bankName': name},
+      ],
+    }).c2bmembersModel.single;
 
-    // Verify that platform version is retrieved.
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is Text && widget.data!.startsWith('Running on:'),
+void main() {
+  testWidgets('installed banks are listed above other banks', (tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: SbpBanksSheet(
+          url: sbpPaymentUrl,
+          banks: SbpBanks(
+            [_bank('bank1', 'Установленный')],
+            [_bank('bank2', 'Другой')],
+            C2bmembersSource.bundled,
+          ),
+        ),
       ),
-      findsOneWidget,
-    );
+    ));
+
+    final installed = tester.getTopLeft(find.text('Установленный'));
+    final header = tester.getTopLeft(find.text('Другие банки'));
+    final other = tester.getTopLeft(find.text('Другой'));
+    expect(installed.dy, lessThan(header.dy));
+    expect(header.dy, lessThan(other.dy));
   });
 }
