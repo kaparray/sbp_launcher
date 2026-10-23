@@ -12,9 +12,12 @@ dependencies:
     path: ../
 
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  path_provider: ^2.1.5
 
 flutter:
   assets:
