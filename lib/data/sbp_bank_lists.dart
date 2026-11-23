@@ -77,7 +77,8 @@ const List<String> sbpIosPriorityBankSchemes = [
 
 /// Android-пакеты банков, которых нет в c2bmembers.json (новые приложения, переименования).
 /// Ключ - schema банка. Используются как дополнительный источник при определении
-/// установленного банка и при открытии ссылки.
+/// установленного банка и при открытии ссылки. Приоритетнее package_name из json:
+/// если установлены оба приложения, открывается пакет из этого списка.
 const Map<String, List<String>> sbpExtraAndroidPackageNames = {
   // РСХБ: новое приложение https://play.google.com/store/apps/details?id=ru.rshb.ownfinance
   'bank100000000020': ['ru.rshb.ownfinance'],

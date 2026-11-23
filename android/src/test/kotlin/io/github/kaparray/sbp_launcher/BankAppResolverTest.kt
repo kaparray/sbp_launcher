@@ -69,11 +69,11 @@ class BankAppResolverTest {
     }
 
     @Test
-    fun `json package wins over extra package when both handle the scheme`() {
-        val result = resolver(mapOf("bank100000000020://qr.nspk.ru/" to listOf("ru.rshb.ownfinance", "ru.rshb.dbo")))
-            .resolve(listOf(BankQuery("bank100000000020", listOf("ru.rshb.dbo", "ru.rshb.ownfinance"))))
+    fun `first package by priority wins when several handle the scheme`() {
+        val result = resolver(mapOf("bank100000000020://qr.nspk.ru/" to listOf("ru.rshb.dbo", "ru.rshb.ownfinance")))
+            .resolve(listOf(BankQuery("bank100000000020", listOf("ru.rshb.ownfinance", "ru.rshb.dbo"))))
 
-        assertEquals("ru.rshb.dbo", result.single().packageName)
+        assertEquals("ru.rshb.ownfinance", result.single().packageName)
     }
 
     @Test

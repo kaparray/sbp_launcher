@@ -66,7 +66,7 @@ void main() {
             'schema': 'bank100000000020',
             'package_name': 'ru.rshb.dbo',
             // новое приложение РСХБ из sbpExtraAndroidPackageNames
-            'package_names': ['ru.rshb.dbo', 'ru.rshb.ownfinance'],
+            'package_names': ['ru.rshb.ownfinance', 'ru.rshb.dbo'],
           },
         ],
         'use_android_local_icons': true,

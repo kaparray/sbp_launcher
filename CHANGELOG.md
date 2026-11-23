@@ -1,3 +1,6 @@
+## 1.0.2
+* Android: packages from `extraAndroidPackageNames` now take priority over `package_name` from c2bmembers.json. When both RSHB apps are installed, `ru.rshb.ownfinance` opens instead of `ru.rshb.dbo`
+
 ## 1.0.1
 * README: install from pub.dev (`sbp_launcher: ^1.0.0`) instead of a git dependency
 

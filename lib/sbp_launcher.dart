@@ -121,8 +121,9 @@ class Sbp {
               'schema': bank.schema,
               'package_name': bank.packageName,
               'package_names': {
-                if (bank.packageName.isNotEmpty) bank.packageName,
+                // Дополнительные пакеты (новые приложения банка) приоритетнее пакета из json.
                 ...?extraAndroidPackageNames[bank.schema],
+                if (bank.packageName.isNotEmpty) bank.packageName,
               }.toList(),
             },
         ],
